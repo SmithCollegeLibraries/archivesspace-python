@@ -58,10 +58,17 @@ class aspaceRepo(object):
         self.connection = jsonResponse
         self.sessionId = jsonResponse['session']
 
-    def repositoriesPost(self):
-        """This doesn't work..."""
-        # TODO
-        jsonResponse = self.requestPost("/repositories", {"jsonmodel_type":"repository", "repo_code": "FOO", "name": "Foo Bar"})
+    def repositoriesPost(self, repo_code, name):
+        """Create a repository
+        >>> from aspy import aspaceRepo
+        >>> repo = aspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
+        >>> repo.connect()
+        >>> response = repo.repositoriesPost('FOOBAR5', 'Test repository made by aspy')
+        >>> response['uri']
+        '/repositories/...'
+        """
+        jsonResponse = self.requestPost("/repositories", {"jsonmodel_type":"repository", "repo_code": repo_code, "name": name})
+        return(jsonResponse)
 
     def subjectsPost(self):
         data = { "jsonmodel_type":"subject",
@@ -84,4 +91,5 @@ class aspaceRepo(object):
 
 if __name__ == "__main__":
     import doctest
-    doctest.testmod()
+    print("Running tests...")
+    doctest.testmod(optionflags=doctest.ELLIPSIS)
