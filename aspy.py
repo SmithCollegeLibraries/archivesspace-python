@@ -40,6 +40,7 @@ class aspaceRepo(object):
         path = pathTemplate.substitute(username = self.username)
         jsonResponse = self.requestPost(path, { "password" : self.password })
         self.connection = jsonResponse
+        self.sessionId = jsonResponse['session']
 
 if __name__ == "__main__":
     import doctest
