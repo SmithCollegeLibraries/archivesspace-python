@@ -1,5 +1,6 @@
 import requests
 from string import Template
+import json
 
 class aspaceRepo(object):
     def __init__(self, protocol, domain, port, username, password):
@@ -8,6 +9,7 @@ class aspaceRepo(object):
         self.port = port
         self.username = username
         self.password = password
+        self.sessionId = None
 
     def getHost(self):
         """Returns the host string containing the protocol domain name and port."""
@@ -15,18 +17,32 @@ class aspaceRepo(object):
         return hostTemplate.substitute(protocol = self.protocol, domain = self.domain, port = self.port)
 
     def requestPost(self, path, data):
-        """Do a POST request to ArchivesSpace and return the json response"""
+        """Do a POST request to ArchivesSpace and return the JSON response"""
+
+        # If we're logged in, set the session hash in the header & JSONify the data
+        if self.sessionId is not None:
+            sessionHeader = { 'X-ArchivesSpace-Session' : self.sessionId }
+            data = json.dumps(data)
+        else:
+            sessionHeader = ""
+
+        # Send the request
         try:
-            r = requests.post(self.getHost() + path, data = data)
+            r = requests.post(self.getHost() + path, data = data, headers = sessionHeader)
         except requests.exceptions.ConnectionError:
             print('ERROR: Unable to connect to ArchivesSpace. Check the host information.')
         else:
             if r.status_code == 403:
-                print("ERROR: Forbidden, check your credentials.")
+                print("ERROR: Forbidden -- check your credentials.")
+                print(r.text)
+            elif r.status_code == 400:
+                print("ERROR: Bad Request -- Your request sucks.")
+                print(r.text)
             elif r.status_code == 200:
                 return r.json()
             else:
-                print("ERROR: " + r.status_code)
+                print("ERROR: " + str(r.status_code))
+                print(r.text)
 
     def connect(self):
         """Start a sessions with ArchivesSpace. This must be done before anything else.
@@ -41,6 +57,30 @@ class aspaceRepo(object):
         jsonResponse = self.requestPost(path, { "password" : self.password })
         self.connection = jsonResponse
         self.sessionId = jsonResponse['session']
+
+    def repositoriesPost(self):
+        """This doesn't work..."""
+        # TODO
+        jsonResponse = self.requestPost("/repositories", {"jsonmodel_type":"repository", "repo_code": "FOO", "name": "Foo Bar"})
+
+    def subjectsPost(self):
+        data = { "jsonmodel_type":"subject",
+                "external_ids":[],
+                "publish":True,
+                "used_within_repositories":[],
+                "used_within_published_repositories":[],
+                "terms":[{ "jsonmodel_type":"term",
+                "term":"Term 132",
+                "term_type":"geographic",
+                "vocabulary":"/vocabularies/156"}],
+                "external_documents":[],
+                "vocabulary":"/vocabularies/157",
+                "authority_id":"http://www.example-596.com",
+                "scope_note":"M911GA46",
+                "source":"gmgpc"}
+        
+        jsonResponse = self.requestPost("/subjects", json.dumps(data))
+        return(jsonResponse)
 
 if __name__ == "__main__":
     import doctest
