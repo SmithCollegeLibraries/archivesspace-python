@@ -2,10 +2,14 @@ import requests
 from string import Template
 import json
 import logging
+import pprint
 
 # Custom Error classes
 class ConnectionError(Exception):
     pass
+
+def logResponse(response):
+    logging.error(json.dumps(response.json(), indent=4))
 
 class aspaceRepo(object):
     """Base class for establishing a session with an ArchivesSpace repository,
@@ -42,15 +46,15 @@ class aspaceRepo(object):
         else:
             if r.status_code == 403:
                 logging.error("Forbidden -- check your credentials.")
-                logging.error(r.text)
+                logResponse(r)
             elif r.status_code == 400:
-                logging.error("Bad Request -- Your request sucks.")
-                logging.error(r.text)
+                logging.error("Bad Request -- I'm sorry Dave, I'm afraid I can't do that.")
+                logResponse(r)
             elif r.status_code == 200:
                 return r.json()
             else:
                 logging.error(str(r.status_code))
-                logging.error(r.text)
+                logResponse(r)
 
     def connect(self):
         """Start a sessions with ArchivesSpace. This must be done before anything else.
