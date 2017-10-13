@@ -8,6 +8,15 @@ class ConnectionError(Exception):
     pass
 
 class aspaceRepo(object):
+    """Base class for establishing a session with an ArchivesSpace repository,
+    and doing API queries against it.
+    
+    >>> from aspy import aspaceRepo
+    >>> repo = aspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
+    >>> repo.connect()
+    >>> print(repo.connection['user']['username'])
+    admin
+    """
     def __init__(self, protocol, domain, port, username, password):
         self.protocol = protocol
         self.domain = domain
