@@ -13,12 +13,12 @@ class BadRequestType(Exception):
 def logResponse(response):
     logging.error(json.dumps(response.json(), indent=4))
 
-class aspaceRepo(object):
+class AspaceRepo(object):
     """Base class for establishing a session with an ArchivesSpace repository,
     and doing API queries against it.
     
-    >>> from aspy import aspaceRepo
-    >>> repo = aspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
+    >>> from aspy import AspaceRepo
+    >>> repo = AspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
     >>> repo.connect()
     >>> print(repo.connection['user']['username'])
     admin
@@ -75,8 +75,8 @@ class aspaceRepo(object):
     def requestGet(self, path, **kwargs):
         """Do a GET request to ArchivesSpace and return the JSON response
         
-        >>> from aspy import aspaceRepo
-        >>> repo = aspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
+        >>> from aspy import AspaceRepo
+        >>> repo = AspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
         >>> repo.connect()
         >>> jsonResponse = repo.requestGet("/users/1")
         >>> jsonResponse['username']
@@ -91,8 +91,8 @@ class aspaceRepo(object):
         
     def connect(self):
         """Start a sessions with ArchivesSpace. This must be done before anything else.
-        >>> from aspy import aspaceRepo
-        >>> repo = aspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
+        >>> from aspy import AspaceRepo
+        >>> repo = AspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
         >>> repo.connect()
         >>> print(repo.connection['user']['username'])
         admin
@@ -115,8 +115,8 @@ class aspaceRepo(object):
 
     def repositoriesPost(self, repo_code, name):
         """Create a repository
-        >>> from aspy import aspaceRepo
-        >>> repo = aspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
+        >>> from aspy import AspaceRepo
+        >>> repo = AspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
         >>> repo.connect()
         >>> response = repo.repositoriesPost('FOOBAR8', 'Test repository made by aspy')
         >>> response['uri']
