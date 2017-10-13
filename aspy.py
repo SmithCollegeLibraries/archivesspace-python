@@ -7,6 +7,8 @@ import pprint
 # Custom Error classes
 class ConnectionError(Exception):
     pass
+class BadRequestType(Exception):
+    pass
 
 def logResponse(response):
     logging.error(json.dumps(response.json(), indent=4))
@@ -34,12 +36,16 @@ class aspaceRepo(object):
         hostTemplate = Template('$protocol://$domain:$port')
         return hostTemplate.substitute(protocol = self.protocol, domain = self.domain, port = self.port)
 
-    def requestPost(self, path, data):
-        """Do a POST request to ArchivesSpace and return the JSON response"""
-
+    def _request(self, path, type, data):
         # Send the request
         try:
-            r = self.session.post(self.getHost() + path, data = json.dumps(data))
+            if type == "post":
+                r = self.session.post(self.getHost() + path, data = json.dumps(data))
+            elif type == "get":
+                r = self.session.get(self.getHost() + path, data = json.dumps(data))
+            else:
+                raise BadRequestType
+            
         except requests.exceptions.ConnectionError:
             logging.error('Unable to connect to ArchivesSpace. Check the host information.')
             raise ConnectionError
@@ -56,6 +62,32 @@ class aspaceRepo(object):
                 logging.error(str(r.status_code))
                 logResponse(r)
 
+    def requestPost(self, path, **kwargs):
+        """Do a POST request to ArchivesSpace and return the JSON response"""
+        data = ""
+        try:
+            data = kwargs['data']
+        except:
+            pass
+        return self._request(path, 'post', data)
+
+    def requestGet(self, path, **kwargs):
+        """Do a GET request to ArchivesSpace and return the JSON response
+        
+        >>> from aspy import aspaceRepo
+        >>> repo = aspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
+        >>> repo.connect()
+        >>> jsonResponse = repo.requestGet("/users/1")
+        >>> jsonResponse['username']
+        'admin'
+        """
+        data = ""
+        try:
+            data = kwargs['data']
+        except:
+            pass
+        return self._request(path, 'get', data)
+        
     def connect(self):
         """Start a sessions with ArchivesSpace. This must be done before anything else.
         >>> from aspy import aspaceRepo
@@ -85,11 +117,11 @@ class aspaceRepo(object):
         >>> from aspy import aspaceRepo
         >>> repo = aspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
         >>> repo.connect()
-        >>> response = repo.repositoriesPost('FOOBAR1', 'Test repository made by aspy')
+        >>> response = repo.repositoriesPost('FOOBAR7', 'Test repository made by aspy')
         >>> response['uri']
         '/repositories/...'
         """
-        jsonResponse = self.requestPost("/repositories", {"jsonmodel_type":"repository", "repo_code": repo_code, "name": name})
+        jsonResponse = self.requestPost("/repositories", data = {"jsonmodel_type":"repository", "repo_code": repo_code, "name": name})
         return(jsonResponse)
 
     def subjectsPost(self):
@@ -114,4 +146,4 @@ class aspaceRepo(object):
 if __name__ == "__main__":
     import doctest
     print("Running tests...")
-    doctest.testmod(optionflags=doctest.ELLIPSIS)
+    doctest.testmod(optionflags=doctest.ELLIPSIS, verbose=True)
