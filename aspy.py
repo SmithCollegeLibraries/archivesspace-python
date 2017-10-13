@@ -23,7 +23,7 @@ class aspaceRepo(object):
         self.port = port
         self.username = username
         self.password = password
-        self.sessionId = None
+        self.session = None
 
     def getHost(self):
         """Returns the host string containing the protocol domain name and port."""
@@ -33,18 +33,9 @@ class aspaceRepo(object):
     def requestPost(self, path, data):
         """Do a POST request to ArchivesSpace and return the JSON response"""
 
-        # If we're logged in, set the session hash in the header & JSONify the data
-        if self.sessionId is not None:
-            sessionHeader = { 'X-ArchivesSpace-Session' : self.sessionId }
-            # ASpace expects JSON text rather than form data, EXCEPT for the initial authentication request
-            data = json.dumps(data)
-        else:
-            # This is the initial authentication request so don't JSONify the data
-            sessionHeader = ""
-
         # Send the request
         try:
-            r = requests.post(self.getHost() + path, data = data, headers = sessionHeader)
+            r = self.session.post(self.getHost() + path, data = json.dumps(data))
         except requests.exceptions.ConnectionError:
             logging.error('Unable to connect to ArchivesSpace. Check the host information.')
             raise ConnectionError
@@ -71,20 +62,26 @@ class aspaceRepo(object):
         """
         pathTemplate = Template('/users/$username/login')
         path = pathTemplate.substitute(username = self.username)
+
+        # Use the requests Session class to handle the session
+        # http://docs.python-requests.org/en/master/user/advanced/#session-objects
+        self.session = requests.Session()
+
         try:
-            jsonResponse = self.requestPost(path, { "password" : self.password })
+            response = self.session.post(self.getHost() + path, { "password" : self.password })
         except ConnectionError:
             logging.error("Couldn't authenticate.")
         else:
-            self.connection = jsonResponse
-            self.sessionId = jsonResponse['session']
+            self.connection = response.json() # Save connection details as python data
+            self.sessionId = self.connection['session']
+            self.session.headers.update({ 'X-ArchivesSpace-Session' : self.sessionId })
 
     def repositoriesPost(self, repo_code, name):
         """Create a repository
         >>> from aspy import aspaceRepo
         >>> repo = aspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
         >>> repo.connect()
-        >>> response = repo.repositoriesPost('FOOBAR5', 'Test repository made by aspy')
+        >>> response = repo.repositoriesPost('FOOBAR1', 'Test repository made by aspy')
         >>> response['uri']
         '/repositories/...'
         """
