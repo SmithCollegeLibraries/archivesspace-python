@@ -37,12 +37,13 @@ class aspaceRepo(object):
         return hostTemplate.substitute(protocol = self.protocol, domain = self.domain, port = self.port)
 
     def _request(self, path, type, data):
+        data = json.dumps(data)
         # Send the request
         try:
             if type == "post":
-                r = self.session.post(self.getHost() + path, data = json.dumps(data))
+                r = self.session.post(self.getHost() + path, data = data)
             elif type == "get":
-                r = self.session.get(self.getHost() + path, data = json.dumps(data))
+                r = self.session.get(self.getHost() + path, data = data)
             else:
                 raise BadRequestType
             
@@ -117,7 +118,7 @@ class aspaceRepo(object):
         >>> from aspy import aspaceRepo
         >>> repo = aspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
         >>> repo.connect()
-        >>> response = repo.repositoriesPost('FOOBAR7', 'Test repository made by aspy')
+        >>> response = repo.repositoriesPost('FOOBAR8', 'Test repository made by aspy')
         >>> response['uri']
         '/repositories/...'
         """
