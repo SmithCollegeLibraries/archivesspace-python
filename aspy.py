@@ -1,6 +1,7 @@
 import requests
 from string import Template
 import json
+import logging
 
 # Custom Error classes
 class ConnectionError(Exception):
@@ -34,20 +35,20 @@ class aspaceRepo(object):
         try:
             r = requests.post(self.getHost() + path, data = data, headers = sessionHeader)
         except requests.exceptions.ConnectionError:
-            print('ERROR: Unable to connect to ArchivesSpace. Check the host information.')
+            logging.error('Unable to connect to ArchivesSpace. Check the host information.')
             raise ConnectionError
         else:
             if r.status_code == 403:
-                print("ERROR: Forbidden -- check your credentials.")
-                print(r.text)
+                logging.error("Forbidden -- check your credentials.")
+                logging.error(r.text)
             elif r.status_code == 400:
-                print("ERROR: Bad Request -- Your request sucks.")
-                print(r.text)
+                logging.error("Bad Request -- Your request sucks.")
+                logging.error(r.text)
             elif r.status_code == 200:
                 return r.json()
             else:
-                print("ERROR: " + str(r.status_code))
-                print(r.text)
+                logging.error(str(r.status_code))
+                logging.error(r.text)
 
     def connect(self):
         """Start a sessions with ArchivesSpace. This must be done before anything else.
@@ -62,7 +63,7 @@ class aspaceRepo(object):
         try:
             jsonResponse = self.requestPost(path, { "password" : self.password })
         except ConnectionError:
-            print("ERROR: Couldn't authenticate.")
+            logging.error("Couldn't authenticate.")
         else:
             self.connection = jsonResponse
             self.sessionId = jsonResponse['session']
