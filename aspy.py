@@ -36,8 +36,10 @@ class aspaceRepo(object):
         # If we're logged in, set the session hash in the header & JSONify the data
         if self.sessionId is not None:
             sessionHeader = { 'X-ArchivesSpace-Session' : self.sessionId }
+            # ASpace expects JSON text rather than form data, EXCEPT for the initial authentication request
             data = json.dumps(data)
         else:
+            # This is the initial authentication request so don't JSONify the data
             sessionHeader = ""
 
         # Send the request
