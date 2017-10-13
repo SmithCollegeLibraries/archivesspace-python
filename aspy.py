@@ -107,7 +107,7 @@ class aspaceRepo(object):
                 "scope_note":"M911GA46",
                 "source":"gmgpc"}
         
-        jsonResponse = self.requestPost("/subjects", json.dumps(data))
+        jsonResponse = self.requestPost("/subjects", data)
         return(jsonResponse)
 
 if __name__ == "__main__":
