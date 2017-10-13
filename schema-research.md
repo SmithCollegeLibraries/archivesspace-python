@@ -31,3 +31,4 @@ I'm not sure why they didn't just use "required"?!
 
 
 http://json-schema.org/documentation.html
+https://stackoverflow.com/questions/8307602/programmatically-generate-methods-for-a-class
