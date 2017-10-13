@@ -2,6 +2,10 @@ import requests
 from string import Template
 import json
 
+# Custom Error classes
+class ConnectionError(Exception):
+    pass
+
 class aspaceRepo(object):
     def __init__(self, protocol, domain, port, username, password):
         self.protocol = protocol
@@ -31,6 +35,7 @@ class aspaceRepo(object):
             r = requests.post(self.getHost() + path, data = data, headers = sessionHeader)
         except requests.exceptions.ConnectionError:
             print('ERROR: Unable to connect to ArchivesSpace. Check the host information.')
+            raise ConnectionError
         else:
             if r.status_code == 403:
                 print("ERROR: Forbidden -- check your credentials.")
@@ -54,9 +59,13 @@ class aspaceRepo(object):
         """
         pathTemplate = Template('/users/$username/login')
         path = pathTemplate.substitute(username = self.username)
-        jsonResponse = self.requestPost(path, { "password" : self.password })
-        self.connection = jsonResponse
-        self.sessionId = jsonResponse['session']
+        try:
+            jsonResponse = self.requestPost(path, { "password" : self.password })
+        except ConnectionError:
+            print("ERROR: Couldn't authenticate.")
+        else:
+            self.connection = jsonResponse
+            self.sessionId = jsonResponse['session']
 
     def repositoriesPost(self, repo_code, name):
         """Create a repository
