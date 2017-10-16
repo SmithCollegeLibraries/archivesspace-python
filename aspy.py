@@ -45,6 +45,31 @@ def checkStatusCodes(response):
         logResponse(response)
         raise AspaceError
 
+def unionRequestData(defaultData, kwargs):
+    """Merge default request data and any data passed to the method into one
+    unified set of data values to pass to ASpace for the request. Passed data
+    overrides default data. Passed data is assumed to be in the form of a kwarg.
+    
+    >>> aspy.unionRequestData({"foo": "bar"}, {"data": {"hello": "world"}})
+    {'foo': 'bar', 'hello': 'world'}
+    >>> aspy.unionRequestData({"foo": "bar"}, {"data": {"foo": "world"}})
+    {'foo': 'world'}
+    >>> 
+    """
+
+    data = {}
+
+    passedData = ""
+    try:
+        passedData = kwargs['data']
+    except:
+        pass
+
+    # Merge
+    data.update(defaultData)
+    data.update(passedData)
+    return data
+
 class AspaceRepo(object):
     """Base class for establishing a session with an ArchivesSpace repository,
     and doing API queries against it.
@@ -150,11 +175,15 @@ class AspaceRepo(object):
         jsonResponse = self.requestPost("/repositories", data = {"jsonmodel_type":"repository", "repo_code": repo_code, "name": name})
         return(jsonResponse)
 
-    def _getPagedRequest(self, path):
+    def _getPagedRequest(self, path, **kwargs):
         """Automatically request all the pages to build a complete data set"""
+
+        data = unionRequestData({"page": "1"}, kwargs)
+
+        # Start a place to add the pages to as they come in
         fullSet = []
         # Get the first page
-        response = self.requestGet(path, data={"page": "1"})
+        response = self.requestGet(path, data=data)
         # Start the big data set
         try:
             fullSet = response['results']
@@ -164,7 +193,8 @@ class AspaceRepo(object):
         numPages = response['last_page']
         # Loop through all the pages and append them to a single big data structure
         for page in range(1, numPages):
-            response = self.requestGet(path, data={"page": str(page)})
+            data = unionRequestData({"page": str(page)}, kwargs)
+            response = self.requestGet(path, data=data)
             fullSet.extend(response['results'])
         # Return the big data structure
         return fullSet
