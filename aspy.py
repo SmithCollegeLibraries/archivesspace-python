@@ -67,8 +67,8 @@ class AspaceRepo(object):
             logging.error('Unable to connect to ArchivesSpace. Check the host information.')
             raise ConnectionError
         else:
-            json = checkStatusCodes(r)
-            return json
+            jsonResponse = checkStatusCodes(r)
+            return jsonResponse
 
     def requestPost(self, path, **kwargs):
         """Do a POST request to ArchivesSpace and return the JSON response"""
@@ -113,13 +113,12 @@ class AspaceRepo(object):
 
         try:
             response = self.session.post(self.getHost() + path, { "password" : self.password })
-            json = checkStatusCodes(response)
+            jsonResponse = checkStatusCodes(response)
         except ConnectionError:
             logging.error("Couldn't authenticate.")
             exit(1)
         else:
-            self.connection = json # Save connection details as python data
-            import pdb; pdb.set_trace()
+            self.connection = jsonResponse # Save connection details as python data
             self.sessionId = self.connection['session']
             self.session.headers.update({ 'X-ArchivesSpace-Session' : self.sessionId })
 
