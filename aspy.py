@@ -28,6 +28,9 @@ def checkStatusCodes(response):
         logging.error("Bad Request -- I'm sorry Dave, I'm afraid I can't do that.")
         logResponse(response)
         raise AspaceBadRequest
+    elif response.status_code == 500:
+        logging.error("500 Internal Server Error")
+        raise AspaceError
     elif response.status_code == 200:
         return response.json()
     else:
@@ -139,6 +142,21 @@ class AspaceRepo(object):
         """
         jsonResponse = self.requestPost("/repositories", data = {"jsonmodel_type":"repository", "repo_code": repo_code, "name": name})
         return(jsonResponse)
+
+    def _getPagedRequest(self, path):
+        fullSet = []
+        # Get the first page
+        response = self.requestGet(path, data={"page": "1"})
+        # Start the big data set
+        fullSet = response['results']
+        # Then determine how many pages there are
+        numPages = response['last_page']
+        # Loop through all the pages and append them to a single big data structure
+        for page in range(1, numPages):
+            response = self.requestGet(path, data={"page": str(page)})
+            fullSet.extend(response['results'])
+        # Return the big data structure
+        return fullSet
 
 if __name__ == "__main__":
     import doctest
