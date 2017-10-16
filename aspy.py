@@ -9,6 +9,12 @@ class ConnectionError(Exception):
     pass
 class BadRequestType(Exception):
     pass
+class AspaceBadRequest(Exception):
+    pass
+class AspaceForbidden(Exception):
+    pass
+class AspaceError(Exception):
+    pass
 
 def logResponse(response):
     logging.error(json.dumps(response.json(), indent=4))
@@ -17,17 +23,17 @@ def checkStatusCodes(response):
     if response.status_code == 403:
         logging.error("Forbidden -- check your credentials.")
         logResponse(response)
-        raise ConnectionError
+        raise AspaceForbidden
     elif response.status_code == 400:
         logging.error("Bad Request -- I'm sorry Dave, I'm afraid I can't do that.")
         logResponse(response)
-        raise ConnectionError
+        raise AspaceBadRequest
     elif response.status_code == 200:
         return response.json()
     else:
         logging.error(str(response.status_code))
         logResponse(response)
-        raise ConnectionError
+        raise AspaceError
 
 class AspaceRepo(object):
     """Base class for establishing a session with an ArchivesSpace repository,
