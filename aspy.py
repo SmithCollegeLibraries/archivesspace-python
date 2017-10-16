@@ -13,6 +13,22 @@ class BadRequestType(Exception):
 def logResponse(response):
     logging.error(json.dumps(response.json(), indent=4))
 
+def checkStatusCodes(response):
+    if response.status_code == 403:
+        logging.error("Forbidden -- check your credentials.")
+        logResponse(response)
+        raise ConnectionError
+    elif response.status_code == 400:
+        logging.error("Bad Request -- I'm sorry Dave, I'm afraid I can't do that.")
+        logResponse(response)
+        raise ConnectionError
+    elif response.status_code == 200:
+        return response.json()
+    else:
+        logging.error(str(response.status_code))
+        logResponse(response)
+        raise ConnectionError
+
 class AspaceRepo(object):
     """Base class for establishing a session with an ArchivesSpace repository,
     and doing API queries against it.
@@ -51,17 +67,8 @@ class AspaceRepo(object):
             logging.error('Unable to connect to ArchivesSpace. Check the host information.')
             raise ConnectionError
         else:
-            if r.status_code == 403:
-                logging.error("Forbidden -- check your credentials.")
-                logResponse(r)
-            elif r.status_code == 400:
-                logging.error("Bad Request -- I'm sorry Dave, I'm afraid I can't do that.")
-                logResponse(r)
-            elif r.status_code == 200:
-                return r.json()
-            else:
-                logging.error(str(r.status_code))
-                logResponse(r)
+            json = checkStatusCodes(r)
+            return json
 
     def requestPost(self, path, **kwargs):
         """Do a POST request to ArchivesSpace and return the JSON response"""
@@ -106,10 +113,13 @@ class AspaceRepo(object):
 
         try:
             response = self.session.post(self.getHost() + path, { "password" : self.password })
+            json = checkStatusCodes(response)
         except ConnectionError:
             logging.error("Couldn't authenticate.")
+            exit(1)
         else:
-            self.connection = response.json() # Save connection details as python data
+            self.connection = json # Save connection details as python data
+            import pdb; pdb.set_trace()
             self.sessionId = self.connection['session']
             self.session.headers.update({ 'X-ArchivesSpace-Session' : self.sessionId })
 
