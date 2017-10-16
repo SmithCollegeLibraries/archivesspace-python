@@ -9,6 +9,8 @@ class ConnectionError(Exception):
     pass
 class BadRequestType(Exception):
     pass
+class NotPaginated(Exception):
+    pass
 class AspaceBadRequest(Exception):
     pass
 class AspaceForbidden(Exception):
@@ -153,7 +155,10 @@ class AspaceRepo(object):
         # Get the first page
         response = self.requestGet(path, data={"page": "1"})
         # Start the big data set
-        fullSet = response['results']
+        try:
+            fullSet = response['results']
+        except Exception:
+            raise NotPaginated
         # Then determine how many pages there are
         numPages = response['last_page']
         # Loop through all the pages and append them to a single big data structure
