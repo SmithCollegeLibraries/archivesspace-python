@@ -13,6 +13,8 @@ class AspaceBadRequest(Exception):
     pass
 class AspaceForbidden(Exception):
     pass
+class AspaceNotFound(Exception):
+    pass
 class AspaceError(Exception):
     pass
 
@@ -28,6 +30,9 @@ def checkStatusCodes(response):
         logging.error("Bad Request -- I'm sorry Dave, I'm afraid I can't do that.")
         logResponse(response)
         raise AspaceBadRequest
+    elif response.status_code == 404:
+        logging.error("Not Found.")
+        raise AspaceNotFound
     elif response.status_code == 500:
         logging.error("500 Internal Server Error")
         raise AspaceError
