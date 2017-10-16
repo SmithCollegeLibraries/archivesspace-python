@@ -59,10 +59,10 @@ class AspaceRepo(object):
         return hostTemplate.substitute(protocol = self.protocol, domain = self.domain, port = self.port)
 
     def _request(self, path, type, data):
-        data = json.dumps(data)
         # Send the request
         try:
             if type == "post":
+                data = json.dumps(data) # turn the data into json format for POST requests
                 r = self.session.post(self.getHost() + path, data = data)
             elif type == "get":
                 r = self.session.get(self.getHost() + path, data = data)
