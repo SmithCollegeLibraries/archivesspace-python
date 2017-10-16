@@ -151,6 +151,7 @@ class AspaceRepo(object):
         return(jsonResponse)
 
     def _getPagedRequest(self, path):
+        """Automatically request all the pages to build a complete data set"""
         fullSet = []
         # Get the first page
         response = self.requestGet(path, data={"page": "1"})
@@ -167,6 +168,15 @@ class AspaceRepo(object):
             fullSet.extend(response['results'])
         # Return the big data structure
         return fullSet
+
+    def _getAllIdsRequest(self, path):
+        """Get a list of all of the IDs"""
+        response = self.requestGet(path, data={"all_ids": True})
+        # Expecting a list of ints, if it's not there's problem
+        if all(isinstance(item, int) for item in response):
+            return response
+        else:
+            raise NotPaginated
 
 if __name__ == "__main__":
     import doctest
