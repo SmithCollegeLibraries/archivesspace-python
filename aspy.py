@@ -114,7 +114,7 @@ class AspaceRepo(object):
             self.session.headers.update({ 'X-ArchivesSpace-Session' : self.sessionId })
 
     def repositoriesPost(self, repo_code, name):
-        """Create a repository
+        """Example method to create a repository
         >>> from aspy import AspaceRepo
         >>> repo = AspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
         >>> repo.connect()
@@ -123,25 +123,6 @@ class AspaceRepo(object):
         '/repositories/...'
         """
         jsonResponse = self.requestPost("/repositories", data = {"jsonmodel_type":"repository", "repo_code": repo_code, "name": name})
-        return(jsonResponse)
-
-    def subjectsPost(self):
-        data = { "jsonmodel_type":"subject",
-                "external_ids":[],
-                "publish":True,
-                "used_within_repositories":[],
-                "used_within_published_repositories":[],
-                "terms":[{ "jsonmodel_type":"term",
-                "term":"Term 132",
-                "term_type":"geographic",
-                "vocabulary":"/vocabularies/156"}],
-                "external_documents":[],
-                "vocabulary":"/vocabularies/157",
-                "authority_id":"http://www.example-596.com",
-                "scope_note":"M911GA46",
-                "source":"gmgpc"}
-        
-        jsonResponse = self.requestPost("/subjects", data)
         return(jsonResponse)
 
 if __name__ == "__main__":
