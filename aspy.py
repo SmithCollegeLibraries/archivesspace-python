@@ -2,17 +2,80 @@ import requests
 from string import Template
 import json
 import logging
+import pprint
 
 # Custom Error classes
 class ConnectionError(Exception):
     pass
+class BadRequestType(Exception):
+    pass
+class NotPaginated(Exception):
+    pass
+class AspaceBadRequest(Exception):
+    pass
+class AspaceForbidden(Exception):
+    pass
+class AspaceNotFound(Exception):
+    pass
+class AspaceError(Exception):
+    pass
 
-class aspaceRepo(object):
+def logResponse(response):
+    logging.error(json.dumps(response.json(), indent=4))
+
+def checkStatusCodes(response):
+    if response.status_code == 403:
+        logging.error("Forbidden -- check your credentials.")
+        logResponse(response)
+        raise AspaceForbidden
+    elif response.status_code == 400:
+        logging.error("Bad Request -- I'm sorry Dave, I'm afraid I can't do that.")
+        logResponse(response)
+        raise AspaceBadRequest
+    elif response.status_code == 404:
+        logging.error("Not Found.")
+        raise AspaceNotFound
+    elif response.status_code == 500:
+        logging.error("500 Internal Server Error")
+        raise AspaceError
+    elif response.status_code == 200:
+        return response.json()
+    else:
+        logging.error(str(response.status_code))
+        logResponse(response)
+        raise AspaceError
+
+def unionRequestData(defaultData, kwargs):
+    """Merge default request data and any data passed to the method into one
+    unified set of data values to pass to ASpace for the request. Passed data
+    overrides default data. Passed data is assumed to be in the form of a kwarg.
+    
+    >>> aspy.unionRequestData({"foo": "bar"}, {"data": {"hello": "world"}})
+    {'foo': 'bar', 'hello': 'world'}
+    >>> aspy.unionRequestData({"foo": "bar"}, {"data": {"foo": "world"}})
+    {'foo': 'world'}
+    >>> 
+    """
+
+    data = {}
+
+    passedData = ""
+    try:
+        passedData = kwargs['data']
+    except:
+        pass
+
+    # Merge
+    data.update(defaultData)
+    data.update(passedData)
+    return data
+
+class AspaceRepo(object):
     """Base class for establishing a session with an ArchivesSpace repository,
     and doing API queries against it.
     
-    >>> from aspy import aspaceRepo
-    >>> repo = aspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
+    >>> from aspy import AspaceRepo
+    >>> repo = AspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
     >>> repo.connect()
     >>> print(repo.connection['user']['username'])
     admin
@@ -23,94 +86,129 @@ class aspaceRepo(object):
         self.port = port
         self.username = username
         self.password = password
-        self.sessionId = None
+        self.session = None
 
     def getHost(self):
         """Returns the host string containing the protocol domain name and port."""
         hostTemplate = Template('$protocol://$domain:$port')
         return hostTemplate.substitute(protocol = self.protocol, domain = self.domain, port = self.port)
 
-    def requestPost(self, path, data):
-        """Do a POST request to ArchivesSpace and return the JSON response"""
-
-        # If we're logged in, set the session hash in the header & JSONify the data
-        if self.sessionId is not None:
-            sessionHeader = { 'X-ArchivesSpace-Session' : self.sessionId }
-            # ASpace expects JSON text rather than form data, EXCEPT for the initial authentication request
-            data = json.dumps(data)
-        else:
-            # This is the initial authentication request so don't JSONify the data
-            sessionHeader = ""
-
+    def _request(self, path, type, data):
         # Send the request
         try:
-            r = requests.post(self.getHost() + path, data = data, headers = sessionHeader)
+            if type == "post":
+                data = json.dumps(data) # turn the data into json format for POST requests
+                r = self.session.post(self.getHost() + path, data = data)
+            elif type == "get":
+                r = self.session.get(self.getHost() + path, data = data)
+            else:
+                raise BadRequestType
+            
         except requests.exceptions.ConnectionError:
             logging.error('Unable to connect to ArchivesSpace. Check the host information.')
             raise ConnectionError
         else:
-            if r.status_code == 403:
-                logging.error("Forbidden -- check your credentials.")
-                logging.error(r.text)
-            elif r.status_code == 400:
-                logging.error("Bad Request -- Your request sucks.")
-                logging.error(r.text)
-            elif r.status_code == 200:
-                return r.json()
-            else:
-                logging.error(str(r.status_code))
-                logging.error(r.text)
+            jsonResponse = checkStatusCodes(r)
+            return jsonResponse
 
+    def requestPost(self, path, **kwargs):
+        """Do a POST request to ArchivesSpace and return the JSON response"""
+        data = ""
+        try:
+            data = kwargs['data']
+        except:
+            pass
+        return self._request(path, 'post', data)
+
+    def requestGet(self, path, **kwargs):
+        """Do a GET request to ArchivesSpace and return the JSON response
+        
+        >>> from aspy import AspaceRepo
+        >>> repo = AspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
+        >>> repo.connect()
+        >>> jsonResponse = repo.requestGet("/users/1")
+        >>> jsonResponse['username']
+        'admin'
+        """
+        data = ""
+        try:
+            data = kwargs['data']
+        except:
+            pass
+        return self._request(path, 'get', data)
+        
     def connect(self):
         """Start a sessions with ArchivesSpace. This must be done before anything else.
-        >>> from aspy import aspaceRepo
-        >>> repo = aspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
+        >>> from aspy import AspaceRepo
+        >>> repo = AspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
         >>> repo.connect()
         >>> print(repo.connection['user']['username'])
         admin
         """
         pathTemplate = Template('/users/$username/login')
         path = pathTemplate.substitute(username = self.username)
+
+        # Use the requests Session class to handle the session
+        # http://docs.python-requests.org/en/master/user/advanced/#session-objects
+        self.session = requests.Session()
+
         try:
-            jsonResponse = self.requestPost(path, { "password" : self.password })
+            response = self.session.post(self.getHost() + path, { "password" : self.password })
+            jsonResponse = checkStatusCodes(response)
         except ConnectionError:
             logging.error("Couldn't authenticate.")
+            exit(1)
         else:
-            self.connection = jsonResponse
-            self.sessionId = jsonResponse['session']
+            self.connection = jsonResponse # Save connection details as python data
+            self.sessionId = self.connection['session']
+            self.session.headers.update({ 'X-ArchivesSpace-Session' : self.sessionId })
 
     def repositoriesPost(self, repo_code, name):
-        """Create a repository
-        >>> from aspy import aspaceRepo
-        >>> repo = aspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
+        """Example method to create a repository
+        >>> from aspy import AspaceRepo
+        >>> repo = AspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
         >>> repo.connect()
-        >>> response = repo.repositoriesPost('FOOBAR5', 'Test repository made by aspy')
+        >>> response = repo.repositoriesPost('FOOBAR8', 'Test repository made by aspy')
         >>> response['uri']
         '/repositories/...'
         """
-        jsonResponse = self.requestPost("/repositories", {"jsonmodel_type":"repository", "repo_code": repo_code, "name": name})
+        jsonResponse = self.requestPost("/repositories", data = {"jsonmodel_type":"repository", "repo_code": repo_code, "name": name})
         return(jsonResponse)
 
-    def subjectsPost(self):
-        data = { "jsonmodel_type":"subject",
-                "external_ids":[],
-                "publish":True,
-                "used_within_repositories":[],
-                "used_within_published_repositories":[],
-                "terms":[{ "jsonmodel_type":"term",
-                "term":"Term 132",
-                "term_type":"geographic",
-                "vocabulary":"/vocabularies/156"}],
-                "external_documents":[],
-                "vocabulary":"/vocabularies/157",
-                "authority_id":"http://www.example-596.com",
-                "scope_note":"M911GA46",
-                "source":"gmgpc"}
-        
-        jsonResponse = self.requestPost("/subjects", data)
-        return(jsonResponse)
+    def _getPagedRequest(self, path, **kwargs):
+        """Automatically request all the pages to build a complete data set"""
+
+        data = unionRequestData({"page": "1"}, kwargs)
+
+        # Start a place to add the pages to as they come in
+        fullSet = []
+        # Get the first page
+        response = self.requestGet(path, data=data)
+        # Start the big data set
+        try:
+            fullSet = response['results']
+        except Exception:
+            raise NotPaginated
+        # Then determine how many pages there are
+        numPages = response['last_page']
+        # Loop through all the pages and append them to a single big data structure
+        for page in range(1, numPages):
+            data = unionRequestData({"page": str(page)}, kwargs)
+            response = self.requestGet(path, data=data)
+            fullSet.extend(response['results'])
+        # Return the big data structure
+        return fullSet
+
+    def _getAllIdsRequest(self, path):
+        """Get a list of all of the IDs"""
+        response = self.requestGet(path, data={"all_ids": True})
+        # Expecting a list of ints, if it's not there's problem
+        if all(isinstance(item, int) for item in response):
+            return response
+        else:
+            raise NotPaginated
 
 if __name__ == "__main__":
     import doctest
     print("Running tests...")
-    doctest.testmod(optionflags=doctest.ELLIPSIS)
+    doctest.testmod(optionflags=doctest.ELLIPSIS, verbose=True)
