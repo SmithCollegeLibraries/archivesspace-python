@@ -50,9 +50,9 @@ def unionRequestData(defaultData, kwargs):
     unified set of data values to pass to ASpace for the request. Passed data
     overrides default data. Passed data is assumed to be in the form of a kwarg.
     
-    >>> aspy.unionRequestData({"foo": "bar"}, {"data": {"hello": "world"}})
+    >>> unionRequestData({"foo": "bar"}, {"data": {"hello": "world"}})
     {'foo': 'bar', 'hello': 'world'}
-    >>> aspy.unionRequestData({"foo": "bar"}, {"data": {"foo": "world"}})
+    >>> unionRequestData({"foo": "bar"}, {"data": {"foo": "world"}})
     {'foo': 'world'}
     >>> 
     """
@@ -70,14 +70,14 @@ def unionRequestData(defaultData, kwargs):
     data.update(passedData)
     return data
 
-class AspaceRepo(object):
+class ArchivesSpace(object):
     """Base class for establishing a session with an ArchivesSpace repository,
     and doing API queries against it.
     
-    >>> from aspy import AspaceRepo
-    >>> repo = AspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
-    >>> repo.connect()
-    >>> print(repo.connection['user']['username'])
+    >>> from aspy import ArchivesSpace
+    >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+    >>> aspace.connect()
+    >>> print(aspace.connection['user']['username'])
     admin
     """
     def __init__(self, protocol, domain, port, username, password):
@@ -123,10 +123,10 @@ class AspaceRepo(object):
     def requestGet(self, path, **kwargs):
         """Do a GET request to ArchivesSpace and return the JSON response
         
-        >>> from aspy import AspaceRepo
-        >>> repo = AspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
-        >>> repo.connect()
-        >>> jsonResponse = repo.requestGet("/users/1")
+        >>> from aspy import ArchivesSpace
+        >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+        >>> aspace.connect()
+        >>> jsonResponse = aspace.requestGet("/users/1")
         >>> jsonResponse['username']
         'admin'
         """
@@ -139,10 +139,10 @@ class AspaceRepo(object):
         
     def connect(self):
         """Start a sessions with ArchivesSpace. This must be done before anything else.
-        >>> from aspy import AspaceRepo
-        >>> repo = AspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
-        >>> repo.connect()
-        >>> print(repo.connection['user']['username'])
+        >>> from aspy import ArchivesSpace
+        >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+        >>> aspace.connect()
+        >>> print(aspace.connection['user']['username'])
         admin
         """
         pathTemplate = Template('/users/$username/login')
@@ -162,18 +162,6 @@ class AspaceRepo(object):
             self.connection = jsonResponse # Save connection details as python data
             self.sessionId = self.connection['session']
             self.session.headers.update({ 'X-ArchivesSpace-Session' : self.sessionId })
-
-    def repositoriesPost(self, repo_code, name):
-        """Example method to create a repository
-        >>> from aspy import AspaceRepo
-        >>> repo = AspaceRepo('http', 'localhost', '8089', 'admin', 'admin')
-        >>> repo.connect()
-        >>> response = repo.repositoriesPost('FOOBAR8', 'Test repository made by aspy')
-        >>> response['uri']
-        '/repositories/...'
-        """
-        jsonResponse = self.requestPost("/repositories", data = {"jsonmodel_type":"repository", "repo_code": repo_code, "name": name})
-        return(jsonResponse)
 
     def _getPagedRequest(self, path, **kwargs):
         """Automatically request all the pages to build a complete data set"""
@@ -207,6 +195,11 @@ class AspaceRepo(object):
             return response
         else:
             raise NotPaginated
+
+    class Repository(object):
+        """Class for managing details of a repository, used in queries to repositories"""
+        def __init__(self, uri):
+            self.uri = uri
 
 if __name__ == "__main__":
     import doctest

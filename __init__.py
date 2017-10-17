@@ -1,1 +1,1 @@
-from .aspy import AspaceRepo
+from .aspy import ArchivesSpace
