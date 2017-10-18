@@ -30,14 +30,14 @@ def checkStatusCodes(response):
         logResponse(response)
         raise AspaceError
 
-def unionRequestData(defaultData, kwargs):
+def _unionRequestData(defaultData, kwargs):
     """Merge default request data and any data passed to the method into one
     unified set of data values to pass to ASpace for the request. Passed data
     overrides default data. Passed data is assumed to be in the form of a kwarg.
     
-    >>> unionRequestData({"foo": "bar"}, {"data": {"hello": "world"}})
+    >>> _unionRequestData({"foo": "bar"}, {"data": {"hello": "world"}})
     {'foo': 'bar', 'hello': 'world'}
-    >>> unionRequestData({"foo": "bar"}, {"data": {"foo": "world"}})
+    >>> _unionRequestData({"foo": "bar"}, {"data": {"foo": "world"}})
     {'foo': 'world'}
     >>> 
     """
@@ -73,7 +73,7 @@ class ArchivesSpace(object):
         self.password = password
         self.session = None
 
-    def getHost(self):
+    def _getHost(self):
         """Returns the host string containing the protocol domain name and port."""
         hostTemplate = Template('$protocol://$domain:$port')
         return hostTemplate.substitute(protocol = self.protocol, domain = self.domain, port = self.port)
@@ -83,9 +83,9 @@ class ArchivesSpace(object):
         try:
             if type == "post":
                 data = json.dumps(data) # turn the data into json format for POST requests
-                r = self.session.post(self.getHost() + path, data = data)
+                r = self.session.post(self._getHost() + path, data = data)
             elif type == "get":
-                r = self.session.get(self.getHost() + path, data = data)
+                r = self.session.get(self._getHost() + path, data = data)
             else:
                 raise BadRequestType
             
@@ -138,7 +138,7 @@ class ArchivesSpace(object):
         self.session = requests.Session()
 
         try:
-            response = self.session.post(self.getHost() + path, { "password" : self.password })
+            response = self.session.post(self._getHost() + path, { "password" : self.password })
             jsonResponse = checkStatusCodes(response)
         except ConnectionError:
             logging.error("Couldn't authenticate.")
@@ -148,10 +148,10 @@ class ArchivesSpace(object):
             self.sessionId = self.connection['session']
             self.session.headers.update({ 'X-ArchivesSpace-Session' : self.sessionId })
 
-    def _getPagedRequest(self, path, **kwargs):
+    def pagedRequestGet(self, path, **kwargs):
         """Automatically request all the pages to build a complete data set"""
 
-        data = unionRequestData({"page": "1"}, kwargs)
+        data = _unionRequestData({"page": "1"}, kwargs)
 
         # Start a place to add the pages to as they come in
         fullSet = []
@@ -166,13 +166,13 @@ class ArchivesSpace(object):
         numPages = response['last_page']
         # Loop through all the pages and append them to a single big data structure
         for page in range(1, numPages):
-            data = unionRequestData({"page": str(page)}, kwargs)
+            data = _unionRequestData({"page": str(page)}, kwargs)
             response = self.requestGet(path, data=data)
             fullSet.extend(response['results'])
         # Return the big data structure
         return fullSet
 
-    def _getAllIdsRequest(self, path):
+    def allIdsRequestGet(self, path):
         """Get a list of all of the IDs"""
         response = self.requestGet(path, data={"all_ids": True})
         # Expecting a list of ints, if it's not there's problem
