@@ -3,7 +3,7 @@ from string import Template
 import json
 import logging
 import pprint
-from exceptions import *
+import aspy.exceptions
 
 def logResponse(response):
     logging.error(json.dumps(response.json(), indent=4))
@@ -12,23 +12,23 @@ def checkStatusCodes(response):
     if response.status_code == 403:
         logging.error("Forbidden -- check your credentials.")
         logResponse(response)
-        raise AspaceForbidden
+        raise aspy.aspy.AspaceForbidden
     elif response.status_code == 400:
         logging.error("Bad Request -- I'm sorry Dave, I'm afraid I can't do that.")
         logResponse(response)
-        raise AspaceBadRequest
+        raise aspy.AspaceBadRequest
     elif response.status_code == 404:
         logging.error("Not Found.")
-        raise AspaceNotFound
+        raise aspy.AspaceNotFound
     elif response.status_code == 500:
         logging.error("500 Internal Server Error")
-        raise AspaceError
+        raise aspy.AspaceError
     elif response.status_code == 200:
         return response.json()
     else:
         logging.error(str(response.status_code))
         logResponse(response)
-        raise AspaceError
+        raise aspy.AspaceError
 
 def _unionRequestData(defaultData, kwargs):
     """Merge default request data and any data passed to the method into one
@@ -87,11 +87,11 @@ class ArchivesSpace(object):
             elif type == "get":
                 r = self.session.get(self._getHost() + path, data = data)
             else:
-                raise BadRequestType
+                raise aspy.BadRequestType
             
         except requests.exceptions.ConnectionError:
             logging.error('Unable to connect to ArchivesSpace. Check the host information.')
-            raise ConnectionError
+            raise aspy.ConnectionError
         else:
             jsonResponse = checkStatusCodes(r)
             return jsonResponse
@@ -161,7 +161,7 @@ class ArchivesSpace(object):
         try:
             fullSet = response['results']
         except Exception:
-            raise NotPaginated
+            raise aspy.NotPaginated
         # Then determine how many pages there are
         numPages = response['last_page']
         # Loop through all the pages and append them to a single big data structure
@@ -179,7 +179,7 @@ class ArchivesSpace(object):
         if all(isinstance(item, int) for item in response):
             return response
         else:
-            raise NotPaginated
+            raise aspy.NotPaginated
 
 if __name__ == "__main__":
     import doctest
