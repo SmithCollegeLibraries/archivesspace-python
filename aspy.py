@@ -196,11 +196,6 @@ class ArchivesSpace(object):
         else:
             raise NotPaginated
 
-    class Repository(object):
-        """Class for managing details of a repository, used in queries to repositories"""
-        def __init__(self, uri):
-            self.uri = uri
-
 if __name__ == "__main__":
     import doctest
     print("Running tests...")
