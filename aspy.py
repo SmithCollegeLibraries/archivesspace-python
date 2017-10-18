@@ -3,22 +3,7 @@ from string import Template
 import json
 import logging
 import pprint
-
-# Custom Error classes
-class ConnectionError(Exception):
-    pass
-class BadRequestType(Exception):
-    pass
-class NotPaginated(Exception):
-    pass
-class AspaceBadRequest(Exception):
-    pass
-class AspaceForbidden(Exception):
-    pass
-class AspaceNotFound(Exception):
-    pass
-class AspaceError(Exception):
-    pass
+from exceptions import *
 
 def logResponse(response):
     logging.error(json.dumps(response.json(), indent=4))
