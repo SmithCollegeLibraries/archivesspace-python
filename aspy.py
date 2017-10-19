@@ -1,9 +1,36 @@
+"""aspy is a python library for making queries to ArchivesSpace much easier.
+
+Basic usage & setting up a connection to ArchivesSpace
+------------------------------------------------------
+
+TODO
+
+Getting an object
+-----------------
+
+TODO
+
+Getting listings and searches
+-----------------------------
+
+TODO
+
+Posting an object
+-----------------
+
+TODO
+
+Modifying an object
+-------------------
+
+TODO
+
+"""
 import requests
 from string import Template
 import json
 import logging
 import pprint
-
 # Custom Error classes
 class ConnectionError(Exception):
     pass
