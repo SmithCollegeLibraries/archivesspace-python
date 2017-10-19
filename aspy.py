@@ -139,6 +139,7 @@ class ArchivesSpace(object):
         
     def connect(self):
         """Start a sessions with ArchivesSpace. This must be done before anything else.
+
         >>> from aspy import ArchivesSpace
         >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
         >>> aspace.connect()
