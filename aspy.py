@@ -21,7 +21,7 @@ To continue you will first need to familiarize yourself with the ArchivesSpace
 REST API documentation located here:
 https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-api
 
-    Pro tip: If required fields are missing from the API documentation, get them
+    Pro tip: If fields are missing from the API documentation, get them
     from the horse's mouth by checking the ArchivesSpace JSON Schemas located
     here:
     https://github.com/archivesspace/archivesspace/blob/master/common/schemas
