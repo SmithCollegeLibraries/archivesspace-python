@@ -1,4 +1,11 @@
-"""aspy is a python library for making queries to ArchivesSpace much easier.
+"""**aspy** is a python module for making queries to ArchivesSpace much easier.
+
+Links to schema and api reference
+
+Compatibility
+-------------
+As of writing aspy has only been tested with ArchivesSpace 2.1.2 and Python 3.
+YMMV with other versions.
 
 Basic usage & setting up a connection to ArchivesSpace
 ------------------------------------------------------

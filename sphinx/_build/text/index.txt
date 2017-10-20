@@ -1,0 +1,95 @@
+**aspy** a Python library for querying the ArchivesSpace API
+************************************************************
+
+**aspy** is a python module for making queries to ArchivesSpace much
+easier.
+
+Links to schema and api reference
+
+
+Compatibility
+=============
+
+As of writing aspy has only been tested with ArchivesSpace 2.1.2 and
+Python 3. YMMV with other versions.
+
+
+Basic usage & setting up a connection to ArchivesSpace
+======================================================
+
+TODO
+
+
+Getting an object
+=================
+
+TODO
+
+
+Getting listings and searches
+=============================
+
+TODO
+
+
+Posting an object
+=================
+
+TODO
+
+
+Modifying an object
+===================
+
+TODO
+
+class aspy.ArchivesSpace(protocol, domain, port, username, password)
+
+   Base class for establishing a session with an ArchivesSpace
+   repository, and doing API queries against it.
+
+   >>> from aspy import ArchivesSpace
+   >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+   >>> aspace.connect()
+   >>> print(aspace.connection['user']['username'])
+   admin
+
+   allIdsRequestGet(path)
+
+      Get a list of all of the IDs
+
+   connect()
+
+      Start a sessions with ArchivesSpace. This must be done before
+      anything else.
+
+      >>> from aspy import ArchivesSpace
+      >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+      >>> aspace.connect()
+      >>> print(aspace.connection['user']['username'])
+      admin
+
+   pagedRequestGet(path, **kwargs)
+
+      Automatically request all the pages to build a complete data set
+
+   requestGet(path, **kwargs)
+
+      Do a GET request to ArchivesSpace and return the JSON response
+
+      >>> from aspy import ArchivesSpace
+      >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+      >>> aspace.connect()
+      >>> jsonResponse = aspace.requestGet("/users/1")
+      >>> jsonResponse['username']
+      'admin'
+
+   requestPost(path, **kwargs)
+
+      Do a POST request to ArchivesSpace and return the JSON response
+
+
+Indices and tables
+******************
+
+* Index
