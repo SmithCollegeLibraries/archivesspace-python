@@ -51,7 +51,16 @@ YMMV with other versions.</p>
 </div>
 <div class="section" id="basic-usage-setting-up-a-connection-to-archivesspace">
 <h2>Basic usage &amp; setting up a connection to ArchivesSpace<a class="headerlink" href="#basic-usage-setting-up-a-connection-to-archivesspace" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<p>At the heart of the module is the class <cite>ArchivesSpace</cite>. To set up a connection
+create an ArchivesSpace with your login credentials, and run the <cite>connect()</cite>
+method.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aspy</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">aspace</span><span class="o">.</span><span class="n">connection</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">][</span><span class="s1">&#39;username&#39;</span><span class="p">])</span>
+<span class="go">admin</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="getting-an-object">
 <h2>Getting an object<a class="headerlink" href="#getting-an-object" title="Permalink to this headline">¶</a></h2>

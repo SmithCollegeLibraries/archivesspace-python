@@ -9,8 +9,16 @@ YMMV with other versions.
 
 Basic usage & setting up a connection to ArchivesSpace
 ------------------------------------------------------
+At the heart of the module is the class `ArchivesSpace`. To set up a connection
+create an ArchivesSpace with your login credentials, and run the `connect()`
+method.
 
-TODO
+>>> from aspy import ArchivesSpace
+>>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+>>> aspace.connect()
+>>> print(aspace.connection['user']['username'])
+admin
+
 
 Getting an object
 -----------------
