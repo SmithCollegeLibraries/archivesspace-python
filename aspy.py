@@ -29,7 +29,7 @@ https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-api
     Note that required fields are indicated by "ifmissing" *not* "required."
 
 
-Getting an record
+Getting a record
 -----------------
 
 TODO
@@ -39,12 +39,12 @@ Getting listings and searches
 
 TODO
 
-Posting an record
+Posting a record
 -----------------
 
 TODO
 
-Modifying an record
+Modifying a record
 -------------------
 
 TODO
