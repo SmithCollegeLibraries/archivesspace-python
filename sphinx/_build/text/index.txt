@@ -62,6 +62,10 @@ Modifying an object
 
 TODO
 
+
+Reference
+=========
+
 class aspy.ArchivesSpace(protocol, domain, port, username, password)
 
    Base class for establishing a session with an ArchivesSpace
@@ -106,9 +110,3 @@ class aspy.ArchivesSpace(protocol, domain, port, username, password)
    requestPost(path, **kwargs)
 
       Do a POST request to ArchivesSpace and return the JSON response
-
-
-Indices and tables
-******************
-
-* Index

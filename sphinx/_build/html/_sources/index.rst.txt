@@ -12,8 +12,3 @@
 
 .. automodule:: aspy
    :members:
-
-Indices and tables
-==================
-
-* :ref:`genindex`
