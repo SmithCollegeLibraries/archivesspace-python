@@ -1,9 +1,62 @@
+"""**aspy** is a python module for making queries to ArchivesSpace much easier.
+
+Compatibility
+-------------
+As of writing, aspy has only been tested with ArchivesSpace 2.1.2 and Python 3.
+YMMV with other versions.
+
+Getting started
+------------------------------------------------------
+At the heart of the module is the class `ArchivesSpace`. To set up a connection
+create an `ArchivesSpace` with your login credentials, and run the `connect()`
+method.
+
+>>> from aspy import ArchivesSpace
+>>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+>>> aspace.connect()
+>>> print(aspace.connection['user']['username'])
+admin
+
+To continue you will first need to familiarize yourself with the ArchivesSpace
+REST API documentation located here:
+https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-api
+
+    Pro tip: If required fields are missing from the API documentation, get them
+    from the horse's mouth by checking the ArchivesSpace JSON Schemas located
+    here:
+    https://github.com/archivesspace/archivesspace/blob/master/common/schemas
+
+    Note that required fields are indicated by "ifmissing" *not* "required."
+
+
+Getting an object
+-----------------
+
+TODO
+
+Getting listings and searches
+-----------------------------
+
+TODO
+
+Posting an object
+-----------------
+
+TODO
+
+Modifying an object
+-------------------
+
+TODO
+
+Reference
+---------
+"""
 import requests
 from string import Template
 import json
 import logging
 import pprint
-
 # Custom Error classes
 class ConnectionError(Exception):
     pass

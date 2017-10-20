@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>aspy a pythonic library for querying the ArchivesSpace API &#8212; aspy 0.1 documentation</title>
+    <title>aspy a Python library for querying the ArchivesSpace API &#8212; aspy 0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -38,11 +38,58 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="aspy-a-pythonic-library-for-querying-the-archivesspace-api">
-<h1><strong>aspy</strong> a pythonic library for querying the ArchivesSpace API<a class="headerlink" href="#aspy-a-pythonic-library-for-querying-the-archivesspace-api" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="aspy-a-python-library-for-querying-the-archivesspace-api">
+<h1><strong>aspy</strong> a Python library for querying the ArchivesSpace API<a class="headerlink" href="#aspy-a-python-library-for-querying-the-archivesspace-api" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<span class="target" id="module-aspy"></span><dl class="class">
+<span class="target" id="module-aspy"></span><p><strong>aspy</strong> is a python module for making queries to ArchivesSpace much easier.</p>
+<div class="section" id="compatibility">
+<h2>Compatibility<a class="headerlink" href="#compatibility" title="Permalink to this headline">¶</a></h2>
+<p>As of writing, aspy has only been tested with ArchivesSpace 2.1.2 and Python 3.
+YMMV with other versions.</p>
+</div>
+<div class="section" id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>At the heart of the module is the class <cite>ArchivesSpace</cite>. To set up a connection
+create an <cite>ArchivesSpace</cite> with your login credentials, and run the <cite>connect()</cite>
+method.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aspy</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">aspace</span><span class="o">.</span><span class="n">connection</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">][</span><span class="s1">&#39;username&#39;</span><span class="p">])</span>
+<span class="go">admin</span>
+</pre></div>
+</div>
+<p>To continue you will first need to familiarize yourself with the ArchivesSpace
+REST API documentation located here:
+<a class="reference external" href="https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-api">https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-api</a></p>
+<blockquote>
+<div><p>Pro tip: If required fields are missing from the API documentation, get them
+from the horse’s mouth by checking the ArchivesSpace JSON Schemas located
+here:
+<a class="reference external" href="https://github.com/archivesspace/archivesspace/blob/master/common/schemas">https://github.com/archivesspace/archivesspace/blob/master/common/schemas</a></p>
+<p>Note that required fields are indicated by “ifmissing” <em>not</em> “required.”</p>
+</div></blockquote>
+</div>
+<div class="section" id="getting-an-object">
+<h2>Getting an object<a class="headerlink" href="#getting-an-object" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="getting-listings-and-searches">
+<h2>Getting listings and searches<a class="headerlink" href="#getting-listings-and-searches" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="posting-an-object">
+<h2>Posting an object<a class="headerlink" href="#posting-an-object" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="modifying-an-object">
+<h2>Modifying an object<a class="headerlink" href="#modifying-an-object" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
 <dt id="aspy.ArchivesSpace">
 <em class="property">class </em><code class="descclassname">aspy.</code><code class="descname">ArchivesSpace</code><span class="sig-paren">(</span><em>protocol</em>, <em>domain</em>, <em>port</em>, <em>username</em>, <em>password</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for establishing a session with an ArchivesSpace repository,
@@ -102,11 +149,6 @@ and doing API queries against it.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
-</ul>
 </div>
 
 

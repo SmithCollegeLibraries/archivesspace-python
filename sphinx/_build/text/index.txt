@@ -1,0 +1,112 @@
+**aspy** a Python library for querying the ArchivesSpace API
+************************************************************
+
+**aspy** is a python module for making queries to ArchivesSpace much
+easier.
+
+
+Compatibility
+=============
+
+As of writing, aspy has only been tested with ArchivesSpace 2.1.2 and
+Python 3. YMMV with other versions.
+
+
+Getting started
+===============
+
+At the heart of the module is the class *ArchivesSpace*. To set up a
+connection create an *ArchivesSpace* with your login credentials, and
+run the *connect()* method.
+
+>>> from aspy import ArchivesSpace
+>>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+>>> aspace.connect()
+>>> print(aspace.connection['user']['username'])
+admin
+
+To continue you will first need to familiarize yourself with the
+ArchivesSpace REST API documentation located here:
+https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-
+api
+
+   Pro tip: If required fields are missing from the API documentation,
+   get them from the horse’s mouth by checking the ArchivesSpace JSON
+   Schemas located here: https://github.com/archivesspace/archivesspa
+   ce/blob/master/common/schemas
+
+   Note that required fields are indicated by “ifmissing” *not*
+   “required.”
+
+
+Getting an object
+=================
+
+TODO
+
+
+Getting listings and searches
+=============================
+
+TODO
+
+
+Posting an object
+=================
+
+TODO
+
+
+Modifying an object
+===================
+
+TODO
+
+
+Reference
+=========
+
+class aspy.ArchivesSpace(protocol, domain, port, username, password)
+
+   Base class for establishing a session with an ArchivesSpace
+   repository, and doing API queries against it.
+
+   >>> from aspy import ArchivesSpace
+   >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+   >>> aspace.connect()
+   >>> print(aspace.connection['user']['username'])
+   admin
+
+   allIdsRequestGet(path)
+
+      Get a list of all of the IDs
+
+   connect()
+
+      Start a sessions with ArchivesSpace. This must be done before
+      anything else.
+
+      >>> from aspy import ArchivesSpace
+      >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+      >>> aspace.connect()
+      >>> print(aspace.connection['user']['username'])
+      admin
+
+   pagedRequestGet(path, **kwargs)
+
+      Automatically request all the pages to build a complete data set
+
+   requestGet(path, **kwargs)
+
+      Do a GET request to ArchivesSpace and return the JSON response
+
+      >>> from aspy import ArchivesSpace
+      >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+      >>> aspace.connect()
+      >>> jsonResponse = aspace.requestGet("/users/1")
+      >>> jsonResponse['username']
+      'admin'
+
+   requestPost(path, **kwargs)
+
+      Do a POST request to ArchivesSpace and return the JSON response

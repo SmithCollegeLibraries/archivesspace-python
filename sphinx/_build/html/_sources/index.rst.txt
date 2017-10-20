@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-**aspy** a pythonic library for querying the ArchivesSpace API
+**aspy** a Python library for querying the ArchivesSpace API
 ==============================================================
 
 .. toctree::
@@ -12,8 +12,3 @@
 
 .. automodule:: aspy
    :members:
-
-Indices and tables
-==================
-
-* :ref:`genindex`
