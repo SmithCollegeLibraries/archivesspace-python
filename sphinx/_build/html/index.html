@@ -43,16 +43,15 @@
 <div class="toctree-wrapper compound">
 </div>
 <span class="target" id="module-aspy"></span><p><strong>aspy</strong> is a python module for making queries to ArchivesSpace much easier.</p>
-<p>Links to schema and api reference</p>
 <div class="section" id="compatibility">
 <h2>Compatibility<a class="headerlink" href="#compatibility" title="Permalink to this headline">¶</a></h2>
-<p>As of writing aspy has only been tested with ArchivesSpace 2.1.2 and Python 3.
+<p>As of writing, aspy has only been tested with ArchivesSpace 2.1.2 and Python 3.
 YMMV with other versions.</p>
 </div>
-<div class="section" id="basic-usage-setting-up-a-connection-to-archivesspace">
-<h2>Basic usage &amp; setting up a connection to ArchivesSpace<a class="headerlink" href="#basic-usage-setting-up-a-connection-to-archivesspace" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
 <p>At the heart of the module is the class <cite>ArchivesSpace</cite>. To set up a connection
-create an ArchivesSpace with your login credentials, and run the <cite>connect()</cite>
+create an <cite>ArchivesSpace</cite> with your login credentials, and run the <cite>connect()</cite>
 method.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aspy</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
@@ -61,6 +60,16 @@ method.</p>
 <span class="go">admin</span>
 </pre></div>
 </div>
+<p>To continue you will first need to familiarize yourself with the ArchivesSpace
+REST API documentation located here:
+<a class="reference external" href="https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-api">https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-api</a></p>
+<blockquote>
+<div><p>Pro tip: If required fields are missing from the API documentation, get them
+from the horse’s mouth by checking the ArchivesSpace JSON Schemas located
+here:
+<a class="reference external" href="https://github.com/archivesspace/archivesspace/blob/master/common/schemas">https://github.com/archivesspace/archivesspace/blob/master/common/schemas</a></p>
+<p>Note that required fields are indicated by “ifmissing” <em>not</em> “required.”</p>
+</div></blockquote>
 </div>
 <div class="section" id="getting-an-object">
 <h2>Getting an object<a class="headerlink" href="#getting-an-object" title="Permalink to this headline">¶</a></h2>
