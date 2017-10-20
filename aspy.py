@@ -7,8 +7,8 @@ YMMV with other versions.
 
 Getting started
 ------------------------------------------------------
-At the heart of the module is the class ```ArchivesSpace```. To set up a connection
-create an ```ArchivesSpace``` with your login credentials, and run the ```connect()```
+At the heart of the module is the class `ArchivesSpace`. To set up a connection
+create an `ArchivesSpace` with your login credentials, and run the `connect()`
 method.
 
 >>> from aspy import ArchivesSpace
@@ -19,12 +19,12 @@ admin
 
 To continue you will first need to familiarize yourself with the ArchivesSpace
 REST API documentation located here:
-[https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-api]
+https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-api
 
     Pro tip: If required fields are missing from the API documentation, get them
     from the horse's mouth by checking the ArchivesSpace JSON Schemas located
     here:
-    [https://github.com/archivesspace/archivesspace/blob/master/common/schemas]
+    https://github.com/archivesspace/archivesspace/blob/master/common/schemas
 
     Note that required fields are indicated by "ifmissing" *not* "required."
 
