@@ -31,8 +31,14 @@ https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-api
 
 Getting a record
 -----------------
+To retrieve a record from ArchivesSpace us the requestGet() method.
 
-TODO
+>>> from aspy import ArchivesSpace
+>>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+>>> aspace.connect()
+>>> jsonResponse = aspace.requestGet("/users/1")
+>>> jsonResponse['username']
+'admin'
 
 Getting listings and searches
 -----------------------------
