@@ -31,7 +31,7 @@ https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-api
 
 Getting a record
 -----------------
-To retrieve a record from ArchivesSpace us the requestGet() method.
+To retrieve a record from ArchivesSpace use the requestGet() method.
 
 >>> from aspy import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
@@ -40,20 +40,56 @@ To retrieve a record from ArchivesSpace us the requestGet() method.
 >>> jsonResponse['username']
 'admin'
 
-Getting listings and searches
------------------------------
-
-TODO
 
 Posting a record
 -----------------
+To post a record to ArchivesSpace use the `requestPost()` method.
 
-TODO
+Example:
+
+>>> from aspy import ArchivesSpace
+>>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+>>> aspace.connect()
+>>> 
+>>> data = { "jsonmodel_type":"subject",
+...         "external_ids":[],
+...         "publish":True,
+...         "used_within_repositories":[],
+...         "used_within_published_repositories":[],
+...         "terms":[{ "jsonmodel_type":"term",
+...         "term":"Alberta",
+...         "term_type":"geographic",
+...         "vocabulary":"/vocabularies/1"}],
+...         "external_documents":[],
+...         "vocabulary":"/vocabularies/1",
+...         "authority_id":"myid114",
+...         "source":"local"}
+>>> 
+>>> response = aspace.requestPost("/subjects", data)
+>>> print(response)
+{'uri': '/subjects/...', 'stale': True, 'lock_version': ..., 'id': ..., 'warnings': [], 'status': 'Created'}
 
 Modifying a record
 -------------------
 
 TODO
+
+Getting listings and search results
+-----------------------------------
+ArchivesSpace uses *paginated* responses for queries that would return many items.
+To do a paginated query use the `pagedRequestGet()` method.
+
+>>> from aspy import ArchivesSpace
+>>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+>>> aspace.connect()
+>>> response = aspace.pagedRequestGet("/subjects")
+>>> for subject in response:
+...     print(subject['title'])
+... 
+Term 132
+Antarctica
+North Pole
+North Slope
 
 Reference
 ---------
@@ -104,14 +140,14 @@ def checkStatusCodes(response):
         logResponse(response)
         raise AspaceError
 
-def _unionRequestData(defaultData, kwargs):
+def _unionRequestData(defaultRequestData, newRequestData):
     """Merge default request data and any data passed to the method into one
     unified set of data values to pass to ASpace for the request. Passed data
-    overrides default data. Passed data is assumed to be in the form of a kwarg.
+    overrides default data.
     
-    >>> _unionRequestData({"foo": "bar"}, {"data": {"hello": "world"}})
+    >>> _unionRequestData({"foo": "bar"}, {"hello": "world"})
     {'foo': 'bar', 'hello': 'world'}
-    >>> _unionRequestData({"foo": "bar"}, {"data": {"foo": "world"}})
+    >>> _unionRequestData({"foo": "bar"}, {"foo": "world"})
     {'foo': 'world'}
     >>> 
     """
@@ -120,12 +156,12 @@ def _unionRequestData(defaultData, kwargs):
 
     passedData = ""
     try:
-        passedData = kwargs['data']
+        passedData = newRequestData
     except:
         pass
 
     # Merge
-    data.update(defaultData)
+    data.update(defaultRequestData)
     data.update(passedData)
     return data
 
@@ -170,16 +206,40 @@ class ArchivesSpace(object):
             jsonResponse = checkStatusCodes(r)
             return jsonResponse
 
-    def requestPost(self, path, **kwargs):
-        """Do a POST request to ArchivesSpace and return the JSON response"""
+    def requestPost(self, path, requestData={}):
+        """Do a POST request to ArchivesSpace and return the JSON response
+
+        >>> from aspy import ArchivesSpace
+        >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+        >>> aspace.connect()
+        >>> 
+        >>> data = { "jsonmodel_type":"subject",
+        ...         "external_ids":[],
+        ...         "publish":True,
+        ...         "used_within_repositories":[],
+        ...         "used_within_published_repositories":[],
+        ...         "terms":[{ "jsonmodel_type":"term",
+        ...         "term":"North Pole",
+        ...         "term_type":"geographic",
+        ...         "vocabulary":"/vocabularies/1"}],
+        ...         "external_documents":[],
+        ...         "vocabulary":"/vocabularies/1",
+        ...         "authority_id":"myid314",
+        ...         "source":"local"}
+        >>> 
+        >>> response = aspace.requestPost("/subjects", data)
+        >>> print(response)
+        {'uri': '/subjects/...', 'stale': True, 'lock_version': ..., 'id': ..., 'warnings': [], 'status': 'Created'}
+        >>> 
+        """
         data = ""
         try:
-            data = kwargs['data']
+            data = requestData
         except:
             pass
         return self._request(path, 'post', data)
 
-    def requestGet(self, path, **kwargs):
+    def requestGet(self, path, requestData={}):
         """Do a GET request to ArchivesSpace and return the JSON response
         
         >>> from aspy import ArchivesSpace
@@ -191,7 +251,7 @@ class ArchivesSpace(object):
         """
         data = ""
         try:
-            data = kwargs['data']
+            data = requestData
         except:
             pass
         return self._request(path, 'get', data)
@@ -223,33 +283,32 @@ class ArchivesSpace(object):
             self.sessionId = self.connection['session']
             self.session.headers.update({ 'X-ArchivesSpace-Session' : self.sessionId })
 
-    def pagedRequestGet(self, path, **kwargs):
+    def pagedRequestGet(self, path, requestData={}):
         """Automatically request all the pages to build a complete data set"""
 
-        data = _unionRequestData({"page": "1"}, kwargs)
-
+        requestData = _unionRequestData({"page": "1"}, requestData)
         # Start a place to add the pages to as they come in
         fullSet = []
         # Get the first page
-        response = self.requestGet(path, data=data)
+        response = self.requestGet(path, requestData=requestData)
         # Start the big data set
         try:
             fullSet = response['results']
-        except Exception:
+        except KeyError:
             raise NotPaginated
         # Then determine how many pages there are
         numPages = response['last_page']
         # Loop through all the pages and append them to a single big data structure
         for page in range(1, numPages):
-            data = _unionRequestData({"page": str(page)}, kwargs)
-            response = self.requestGet(path, data=data)
+            data = _unionRequestData({"page": str(page)}, requestData)
+            response = self.requestGet(path, requestData=requestData)
             fullSet.extend(response['results'])
         # Return the big data structure
         return fullSet
 
     def allIdsRequestGet(self, path):
         """Get a list of all of the IDs"""
-        response = self.requestGet(path, data={"all_ids": True})
+        response = self.requestGet(path, requestData={"all_ids": True})
         # Expecting a list of ints, if it's not there's problem
         if all(isinstance(item, int) for item in response):
             return response
@@ -259,4 +318,5 @@ class ArchivesSpace(object):
 if __name__ == "__main__":
     import doctest
     print("Running tests...")
+    
     doctest.testmod(optionflags=doctest.ELLIPSIS, verbose=True)

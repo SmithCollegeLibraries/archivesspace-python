@@ -73,7 +73,7 @@ here:
 </div>
 <div class="section" id="getting-a-record">
 <h2>Getting a record<a class="headerlink" href="#getting-a-record" title="Permalink to this headline">¶</a></h2>
-<p>To retrieve a record from ArchivesSpace us the requestGet() method.</p>
+<p>To retrieve a record from ArchivesSpace use the requestGet() method.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aspy</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
@@ -83,8 +83,8 @@ here:
 </pre></div>
 </div>
 </div>
-<div class="section" id="getting-listings-and-searches">
-<h2>Getting listings and searches<a class="headerlink" href="#getting-listings-and-searches" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="getting-listings-and-search-results">
+<h2>Getting listings and search results<a class="headerlink" href="#getting-listings-and-search-results" title="Permalink to this headline">¶</a></h2>
 <p>TODO</p>
 </div>
 <div class="section" id="posting-a-record">
@@ -130,13 +130,13 @@ and doing API queries against it.</p>
 
 <dl class="method">
 <dt id="aspy.ArchivesSpace.pagedRequestGet">
-<code class="descname">pagedRequestGet</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.pagedRequestGet" title="Permalink to this definition">¶</a></dt>
+<code class="descname">pagedRequestGet</code><span class="sig-paren">(</span><em>path</em>, <em>data={}</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.pagedRequestGet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Automatically request all the pages to build a complete data set</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="aspy.ArchivesSpace.requestGet">
-<code class="descname">requestGet</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.requestGet" title="Permalink to this definition">¶</a></dt>
+<code class="descname">requestGet</code><span class="sig-paren">(</span><em>path</em>, <em>data={}</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.requestGet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Do a GET request to ArchivesSpace and return the JSON response</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aspy</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
@@ -150,7 +150,7 @@ and doing API queries against it.</p>
 
 <dl class="method">
 <dt id="aspy.ArchivesSpace.requestPost">
-<code class="descname">requestPost</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.requestPost" title="Permalink to this definition">¶</a></dt>
+<code class="descname">requestPost</code><span class="sig-paren">(</span><em>path</em>, <em>data={}</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.requestPost" title="Permalink to this definition">¶</a></dt>
 <dd><p>Do a POST request to ArchivesSpace and return the JSON response</p>
 </dd></dl>
 
