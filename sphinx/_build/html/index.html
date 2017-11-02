@@ -83,17 +83,70 @@ here:
 </pre></div>
 </div>
 </div>
-<div class="section" id="getting-listings-and-search-results">
-<h2>Getting listings and search results<a class="headerlink" href="#getting-listings-and-search-results" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
-</div>
 <div class="section" id="posting-a-record">
 <h2>Posting a record<a class="headerlink" href="#posting-a-record" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<p>To post a record to ArchivesSpace use the <cite>requestPost()</cite> method.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aspy</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;jsonmodel_type&quot;</span><span class="p">:</span><span class="s2">&quot;subject&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;external_ids&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;publish&quot;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;used_within_repositories&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;used_within_published_repositories&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;terms&quot;</span><span class="p">:[{</span> <span class="s2">&quot;jsonmodel_type&quot;</span><span class="p">:</span><span class="s2">&quot;term&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;term&quot;</span><span class="p">:</span><span class="s2">&quot;Alberta&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;term_type&quot;</span><span class="p">:</span><span class="s2">&quot;geographic&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;vocabulary&quot;</span><span class="p">:</span><span class="s2">&quot;/vocabularies/1&quot;</span><span class="p">}],</span>
+<span class="gp">... </span>        <span class="s2">&quot;external_documents&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;vocabulary&quot;</span><span class="p">:</span><span class="s2">&quot;/vocabularies/1&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;authority_id&quot;</span><span class="p">:</span><span class="s2">&quot;myid114&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;source&quot;</span><span class="p">:</span><span class="s2">&quot;local&quot;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">aspace</span><span class="o">.</span><span class="n">requestPost</span><span class="p">(</span><span class="s2">&quot;/subjects&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+<span class="go">{&#39;uri&#39;: &#39;/subjects/...&#39;, &#39;stale&#39;: True, &#39;lock_version&#39;: ..., &#39;id&#39;: ..., &#39;warnings&#39;: [], &#39;status&#39;: &#39;Created&#39;}</span>
+</pre></div>
 </div>
-<div class="section" id="modifying-a-record">
-<h2>Modifying a record<a class="headerlink" href="#modifying-a-record" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+</div>
+<div class="section" id="updating-a-record">
+<h2>Updating a record<a class="headerlink" href="#updating-a-record" title="Permalink to this headline">¶</a></h2>
+<p>Upading a record in ArchivesSpace is a two step process. First, retrieve the
+record, then post the modified version back to ArchivesSpace.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">8089</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">myrecord</span> <span class="o">=</span> <span class="n">aspace</span><span class="o">.</span><span class="n">requestGet</span><span class="p">(</span><span class="s1">&#39;/subjects/12&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">myrecord</span><span class="p">[</span><span class="s1">&#39;scope_note&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Hello World&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">aspace</span><span class="o">.</span><span class="n">requestPost</span><span class="p">(</span><span class="s1">&#39;/subjects/12&#39;</span><span class="p">,</span> <span class="n">requestData</span><span class="o">=</span><span class="n">myrecord</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;lock_version&#39;</span><span class="p">]</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<blockquote>
+<div>Behind the scenes: there’s a special field called <cite>lock_version</cite> included in the
+retrieved data structure. This field is required by ArchivesSpace when
+you post the record back. This field ensures that only one agent edits the
+record at a time.</div></blockquote>
+</div>
+<div class="section" id="getting-listings-and-search-results">
+<h2>Getting listings and search results<a class="headerlink" href="#getting-listings-and-search-results" title="Permalink to this headline">¶</a></h2>
+<p>ArchivesSpace uses <em>paginated</em> responses for queries that would return many items.
+To do a paginated query use the <cite>pagedRequestGet()</cite> method.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aspy</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">aspace</span><span class="o">.</span><span class="n">pagedRequestGet</span><span class="p">(</span><span class="s2">&quot;/subjects&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span>
+<span class="gp">... </span>
+<span class="go">Term 132</span>
+<span class="go">Antarctica</span>
+<span class="go">North Pole</span>
+<span class="go">North Slope</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
@@ -130,13 +183,13 @@ and doing API queries against it.</p>
 
 <dl class="method">
 <dt id="aspy.ArchivesSpace.pagedRequestGet">
-<code class="descname">pagedRequestGet</code><span class="sig-paren">(</span><em>path</em>, <em>data={}</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.pagedRequestGet" title="Permalink to this definition">¶</a></dt>
+<code class="descname">pagedRequestGet</code><span class="sig-paren">(</span><em>path</em>, <em>requestData={}</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.pagedRequestGet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Automatically request all the pages to build a complete data set</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="aspy.ArchivesSpace.requestGet">
-<code class="descname">requestGet</code><span class="sig-paren">(</span><em>path</em>, <em>data={}</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.requestGet" title="Permalink to this definition">¶</a></dt>
+<code class="descname">requestGet</code><span class="sig-paren">(</span><em>path</em>, <em>requestData={}</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.requestGet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Do a GET request to ArchivesSpace and return the JSON response</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aspy</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
@@ -150,8 +203,32 @@ and doing API queries against it.</p>
 
 <dl class="method">
 <dt id="aspy.ArchivesSpace.requestPost">
-<code class="descname">requestPost</code><span class="sig-paren">(</span><em>path</em>, <em>data={}</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.requestPost" title="Permalink to this definition">¶</a></dt>
+<code class="descname">requestPost</code><span class="sig-paren">(</span><em>path</em>, <em>requestData={}</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.requestPost" title="Permalink to this definition">¶</a></dt>
 <dd><p>Do a POST request to ArchivesSpace and return the JSON response</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aspy</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;jsonmodel_type&quot;</span><span class="p">:</span><span class="s2">&quot;subject&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;external_ids&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;publish&quot;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;used_within_repositories&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;used_within_published_repositories&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;terms&quot;</span><span class="p">:[{</span> <span class="s2">&quot;jsonmodel_type&quot;</span><span class="p">:</span><span class="s2">&quot;term&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;term&quot;</span><span class="p">:</span><span class="s2">&quot;North Pole&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;term_type&quot;</span><span class="p">:</span><span class="s2">&quot;geographic&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;vocabulary&quot;</span><span class="p">:</span><span class="s2">&quot;/vocabularies/1&quot;</span><span class="p">}],</span>
+<span class="gp">... </span>        <span class="s2">&quot;external_documents&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;vocabulary&quot;</span><span class="p">:</span><span class="s2">&quot;/vocabularies/1&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;authority_id&quot;</span><span class="p">:</span><span class="s2">&quot;myid314&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;source&quot;</span><span class="p">:</span><span class="s2">&quot;local&quot;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">aspace</span><span class="o">.</span><span class="n">requestPost</span><span class="p">(</span><span class="s2">&quot;/subjects&quot;</span><span class="p">,</span> <span class="n">requestData</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+<span class="go">{&#39;uri&#39;: &#39;/subjects/...&#39;, &#39;stale&#39;: True, &#39;lock_version&#39;: ..., &#39;id&#39;: ..., &#39;warnings&#39;: [], &#39;status&#39;: &#39;Created&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>

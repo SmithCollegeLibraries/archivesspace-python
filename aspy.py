@@ -69,10 +69,23 @@ Example:
 >>> print(response)
 {'uri': '/subjects/...', 'stale': True, 'lock_version': ..., 'id': ..., 'warnings': [], 'status': 'Created'}
 
-Modifying a record
+Updating a record
 -------------------
+Upading a record in ArchivesSpace is a two step process. First, retrieve the
+record, then post the modified version back to ArchivesSpace.
 
-TODO
+>>> aspace = ArchivesSpace('http','localhost', 8089, 'admin', 'admin')
+>>> aspace.connect()
+>>> myrecord = aspace.requestGet('/subjects/12')
+>>> myrecord['scope_note'] = "Hello World"
+>>> response = aspace.requestPost('/subjects/12', requestData=myrecord)
+>>> response['lock_version']
+1
+
+    Behind the scenes: there's a special field called `lock_version` included in the
+    retrieved data structure. This field is required by ArchivesSpace when
+    you post the record back. This field ensures that only one agent edits the
+    record at a time.
 
 Getting listings and search results
 -----------------------------------
@@ -227,7 +240,7 @@ class ArchivesSpace(object):
         ...         "authority_id":"myid314",
         ...         "source":"local"}
         >>> 
-        >>> response = aspace.requestPost("/subjects", data)
+        >>> response = aspace.requestPost("/subjects", requestData=data)
         >>> print(response)
         {'uri': '/subjects/...', 'stale': True, 'lock_version': ..., 'id': ..., 'warnings': [], 'status': 'Created'}
         >>> 
