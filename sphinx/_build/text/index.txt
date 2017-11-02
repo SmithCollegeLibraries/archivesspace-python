@@ -30,37 +30,97 @@ ArchivesSpace REST API documentation located here:
 https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-
 api
 
-   Pro tip: If required fields are missing from the API documentation,
-   get them from the horse’s mouth by checking the ArchivesSpace JSON
-   Schemas located here: https://github.com/archivesspace/archivesspa
-   ce/blob/master/common/schemas
+   Pro tip: If fields are missing from the API documentation, get them
+   from the horse’s mouth by checking the ArchivesSpace JSON Schemas
+   located here: https://github.com/archivesspace/archivesspace/blob/
+   master/common/schemas
 
    Note that required fields are indicated by “ifmissing” *not*
    “required.”
 
 
-Getting an object
+Getting a record
+================
+
+To retrieve a record from ArchivesSpace use the requestGet() method.
+
+>>> from aspy import ArchivesSpace
+>>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+>>> aspace.connect()
+>>> jsonResponse = aspace.requestGet("/users/1")
+>>> jsonResponse['username']
+'admin'
+
+
+Posting a record
+================
+
+To post a record to ArchivesSpace use the *requestPost()* method.
+
+Example:
+
+>>> from aspy import ArchivesSpace
+>>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+>>> aspace.connect()
+>>> 
+>>> data = { "jsonmodel_type":"subject",
+...         "external_ids":[],
+...         "publish":True,
+...         "used_within_repositories":[],
+...         "used_within_published_repositories":[],
+...         "terms":[{ "jsonmodel_type":"term",
+...         "term":"Alberta",
+...         "term_type":"geographic",
+...         "vocabulary":"/vocabularies/1"}],
+...         "external_documents":[],
+...         "vocabulary":"/vocabularies/1",
+...         "authority_id":"myid114",
+...         "source":"local"}
+>>> 
+>>> response = aspace.requestPost("/subjects", data)
+>>> print(response)
+{'uri': '/subjects/...', 'stale': True, 'lock_version': ..., 'id': ..., 'warnings': [], 'status': 'Created'}
+
+
+Updating a record
 =================
 
-TODO
+Upading a record in ArchivesSpace is a two step process. First,
+retrieve the record, then post the modified version back to
+ArchivesSpace.
+
+>>> aspace = ArchivesSpace('http','localhost', 8089, 'admin', 'admin')
+>>> aspace.connect()
+>>> myrecord = aspace.requestGet('/subjects/12')
+>>> myrecord['scope_note'] = "Hello World"
+>>> response = aspace.requestPost('/subjects/12', requestData=myrecord)
+>>> response['lock_version']
+1
+
+   Behind the scenes: there’s a special field called *lock_version*
+   included in the retrieved data structure. This field is required by
+   ArchivesSpace when you post the record back. This field ensures
+   that only one agent edits the record at a time.
 
 
-Getting listings and searches
-=============================
+Getting listings and search results
+===================================
 
-TODO
+ArchivesSpace uses *paginated* responses for queries that would return
+many items. To do a paginated query use the *pagedRequestGet()*
+method.
 
-
-Posting an object
-=================
-
-TODO
-
-
-Modifying an object
-===================
-
-TODO
+>>> from aspy import ArchivesSpace
+>>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+>>> aspace.connect()
+>>> response = aspace.pagedRequestGet("/subjects")
+>>> for subject in response:
+...     print(subject['title'])
+... 
+Term 132
+Antarctica
+North Pole
+North Slope
 
 
 Reference
@@ -92,11 +152,11 @@ class aspy.ArchivesSpace(protocol, domain, port, username, password)
       >>> print(aspace.connection['user']['username'])
       admin
 
-   pagedRequestGet(path, **kwargs)
+   pagedRequestGet(path, requestData={})
 
       Automatically request all the pages to build a complete data set
 
-   requestGet(path, **kwargs)
+   requestGet(path, requestData={})
 
       Do a GET request to ArchivesSpace and return the JSON response
 
@@ -107,6 +167,29 @@ class aspy.ArchivesSpace(protocol, domain, port, username, password)
       >>> jsonResponse['username']
       'admin'
 
-   requestPost(path, **kwargs)
+   requestPost(path, requestData={})
 
       Do a POST request to ArchivesSpace and return the JSON response
+
+      >>> from aspy import ArchivesSpace
+      >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+      >>> aspace.connect()
+      >>> 
+      >>> data = { "jsonmodel_type":"subject",
+      ...         "external_ids":[],
+      ...         "publish":True,
+      ...         "used_within_repositories":[],
+      ...         "used_within_published_repositories":[],
+      ...         "terms":[{ "jsonmodel_type":"term",
+      ...         "term":"North Pole",
+      ...         "term_type":"geographic",
+      ...         "vocabulary":"/vocabularies/1"}],
+      ...         "external_documents":[],
+      ...         "vocabulary":"/vocabularies/1",
+      ...         "authority_id":"myid314",
+      ...         "source":"local"}
+      >>> 
+      >>> response = aspace.requestPost("/subjects", requestData=data)
+      >>> print(response)
+      {'uri': '/subjects/...', 'stale': True, 'lock_version': ..., 'id': ..., 'warnings': [], 'status': 'Created'}
+      >>> 
