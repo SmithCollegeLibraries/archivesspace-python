@@ -188,6 +188,11 @@ class ArchivesSpace(object):
     >>> print(aspace.connection['user']['username'])
     admin
     """
+    
+    # Optional custom JSON serializer to be passed to json.dumps if provided
+    # See method ArchivesSpace.setJsonSerializerDefault()
+    jsonSerializerDefault = None
+    
     def __init__(self, protocol, domain, port, username, password):
         self.protocol = protocol
         self.domain = domain
@@ -205,7 +210,10 @@ class ArchivesSpace(object):
         # Send the request
         try:
             if type == "post":
-                data = json.dumps(data) # turn the data into json format for POST requests
+                if self.jsonSerializerDefault is not None:
+                    data = json.dumps(data, default = self.jsonSerializerDefault) # turn the data into json format for POST requests
+                else:
+                    data = json.dumps(data) # turn the data into json format for POST requests
                 r = self.session.post(self._getHost() + path, data = data)
             elif type == "get":
                 r = self.session.get(self._getHost() + path, data = data)
@@ -327,6 +335,15 @@ class ArchivesSpace(object):
             return response
         else:
             raise NotPaginated
+
+    def setJsonSerializerDefault(self, jsonSerializerDefault):
+        """Set an optional custom JSON serializer to be passed to json.dumps.
+        c.f.
+        https://docs.python.org/3/library/json.html#json.JSONEncoder.default
+        
+        If you don't know what this is, don't use it.
+        """
+        self.jsonSerializerDefault = jsonSerializerDefault
 
 if __name__ == "__main__":
     import doctest
