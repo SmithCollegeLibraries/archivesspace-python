@@ -129,7 +129,7 @@ class AspaceError(Exception):
     pass
 
 def logResponse(response):
-    logging.error(json.dumps(response.json(), indent=4))
+    logging.error('Response: ' + json.dumps(response.json(), indent=4))
 
 def checkStatusCodes(response):
     if response.status_code == 403:
@@ -137,14 +137,16 @@ def checkStatusCodes(response):
         logResponse(response)
         raise AspaceForbidden
     elif response.status_code == 400:
-        logging.error("Bad Request -- I'm sorry Dave, I'm afraid I can't do that.")
+        logging.error("Bad Request -- can't do that.")
         logResponse(response)
         raise AspaceBadRequest
     elif response.status_code == 404:
         logging.error("Not Found.")
+        logResponse(response)
         raise AspaceNotFound
     elif response.status_code == 500:
         logging.error("500 Internal Server Error")
+        logResponse(response)
         raise AspaceError
     elif response.status_code == 200:
         return response.json()
