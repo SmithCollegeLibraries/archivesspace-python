@@ -1,8 +1,8 @@
-"""**aspy** is a python module for making queries to ArchivesSpace much easier.
+"""**archivesspace** is a python module for making queries to ArchivesSpace much easier.
 
 Compatibility
 -------------
-As of writing, aspy has only been tested with ArchivesSpace 2.1.2 and Python 3.
+As of writing, archivesspace has only been tested with ArchivesSpace 2.1.2 and Python 3.
 YMMV with other versions.
 
 Getting started
@@ -11,7 +11,7 @@ At the heart of the module is the class `ArchivesSpace`. To set up a connection
 create an `ArchivesSpace` with your login credentials, and run the `connect()`
 method.
 
->>> from aspy import ArchivesSpace
+>>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> print(aspace.connection['user']['username'])
@@ -33,7 +33,7 @@ Getting a record
 -----------------
 To retrieve a record from ArchivesSpace use the requestGet() method.
 
->>> from aspy import ArchivesSpace
+>>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> jsonResponse = aspace.requestGet("/users/1")
@@ -47,7 +47,7 @@ To post a record to ArchivesSpace use the `requestPost()` method.
 
 Example:
 
->>> from aspy import ArchivesSpace
+>>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> 
@@ -76,9 +76,9 @@ record, then post the modified version back to ArchivesSpace.
 
 >>> aspace = ArchivesSpace('http','localhost', 8089, 'admin', 'admin')
 >>> aspace.connect()
->>> myrecord = aspace.requestGet('/subjects/12')
+>>> myrecord = aspace.requestGet('/subjects/1')
 >>> myrecord['scope_note'] = "Hello World"
->>> response = aspace.requestPost('/subjects/12', requestData=myrecord)
+>>> response = aspace.requestPost('/subjects/1', requestData=myrecord)
 >>> response['lock_version']
 1
 
@@ -92,7 +92,7 @@ Getting listings and search results
 ArchivesSpace uses *paginated* responses for queries that would return many items.
 To do a paginated query use the `pagedRequestGet()` method.
 
->>> from aspy import ArchivesSpace
+>>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> response = aspace.pagedRequestGet("/subjects")
@@ -184,7 +184,7 @@ class ArchivesSpace(object):
     """Base class for establishing a session with an ArchivesSpace repository,
     and doing API queries against it.
     
-    >>> from aspy import ArchivesSpace
+    >>> from archivesspace import ArchivesSpace
     >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
     >>> aspace.connect()
     >>> print(aspace.connection['user']['username'])
@@ -232,7 +232,7 @@ class ArchivesSpace(object):
     def requestPost(self, path, requestData={}):
         """Do a POST request to ArchivesSpace and return the JSON response
 
-        >>> from aspy import ArchivesSpace
+        >>> from archivesspace import ArchivesSpace
         >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
         >>> aspace.connect()
         >>> 
@@ -265,7 +265,7 @@ class ArchivesSpace(object):
     def requestGet(self, path, requestData={}):
         """Do a GET request to ArchivesSpace and return the JSON response
         
-        >>> from aspy import ArchivesSpace
+        >>> from archivesspace import ArchivesSpace
         >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
         >>> aspace.connect()
         >>> jsonResponse = aspace.requestGet("/users/1")
@@ -282,7 +282,7 @@ class ArchivesSpace(object):
     def connect(self):
         """Start a sessions with ArchivesSpace. This must be done before anything else.
 
-        >>> from aspy import ArchivesSpace
+        >>> from archivesspace import ArchivesSpace
         >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
         >>> aspace.connect()
         >>> print(aspace.connection['user']['username'])

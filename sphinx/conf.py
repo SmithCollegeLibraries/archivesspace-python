@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# aspy documentation build configuration file, created by
+# archivesspace documentation build configuration file, created by
 # sphinx-quickstart on Wed Oct 18 13:20:40 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -46,7 +46,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'aspy'
+project = u'archivesspace'
 copyright = u'2017, Tristan Chambers'
 author = u'Tristan Chambers'
 
@@ -115,7 +115,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'aspydoc'
+htmlhelp_basename = 'archivesspacedoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -142,7 +142,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'aspy.tex', u'aspy Documentation',
+    (master_doc, 'archivesspace.tex', u'archivesspace Documentation',
      u'Tristan Chambers', 'manual'),
 ]
 
@@ -152,7 +152,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'aspy', u'aspy Documentation',
+    (master_doc, 'archivesspace', u'archivesspace Documentation',
      [author], 1)
 ]
 
@@ -163,7 +163,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'aspy', u'aspy Documentation',
-     author, 'aspy', 'One line description of project.',
+    (master_doc, 'archivesspace', u'archivesspace Documentation',
+     author, 'archivesspace', 'One line description of project.',
      'Miscellaneous'),
 ]

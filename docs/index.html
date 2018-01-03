@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>aspy a Python library for querying the ArchivesSpace API &#8212; aspy 0.1 documentation</title>
+    <title>archivesspace a Python library for querying the ArchivesSpace API &#8212; archivesspace 0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -38,14 +38,14 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="aspy-a-python-library-for-querying-the-archivesspace-api">
-<h1><strong>aspy</strong> a Python library for querying the ArchivesSpace API<a class="headerlink" href="#aspy-a-python-library-for-querying-the-archivesspace-api" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="archivesspace-a-python-library-for-querying-the-archivesspace-api">
+<h1><strong>archivesspace</strong> a Python library for querying the ArchivesSpace API<a class="headerlink" href="#archivesspace-a-python-library-for-querying-the-archivesspace-api" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<span class="target" id="module-aspy"></span><p><strong>aspy</strong> is a python module for making queries to ArchivesSpace much easier.</p>
+<span class="target" id="module-archivesspace"></span><p><strong>archivesspace</strong> is a python module for making queries to ArchivesSpace much easier.</p>
 <div class="section" id="compatibility">
 <h2>Compatibility<a class="headerlink" href="#compatibility" title="Permalink to this headline">¶</a></h2>
-<p>As of writing, aspy has only been tested with ArchivesSpace 2.1.2 and Python 3.
+<p>As of writing, archivesspace has only been tested with ArchivesSpace 2.1.2 and Python 3.
 YMMV with other versions.</p>
 </div>
 <div class="section" id="getting-started">
@@ -53,7 +53,7 @@ YMMV with other versions.</p>
 <p>At the heart of the module is the class <cite>ArchivesSpace</cite>. To set up a connection
 create an <cite>ArchivesSpace</cite> with your login credentials, and run the <cite>connect()</cite>
 method.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aspy</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">archivesspace</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">aspace</span><span class="o">.</span><span class="n">connection</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">][</span><span class="s1">&#39;username&#39;</span><span class="p">])</span>
@@ -90,11 +90,11 @@ here:
 <div class="section" id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="aspy.ArchivesSpace">
-<em class="property">class </em><code class="descclassname">aspy.</code><code class="descname">ArchivesSpace</code><span class="sig-paren">(</span><em>protocol</em>, <em>domain</em>, <em>port</em>, <em>username</em>, <em>password</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace" title="Permalink to this definition">¶</a></dt>
+<dt id="archivesspace.ArchivesSpace">
+<em class="property">class </em><code class="descclassname">archivesspace.</code><code class="descname">ArchivesSpace</code><span class="sig-paren">(</span><em>protocol</em>, <em>domain</em>, <em>port</em>, <em>username</em>, <em>password</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for establishing a session with an ArchivesSpace repository,
 and doing API queries against it.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aspy</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">archivesspace</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">aspace</span><span class="o">.</span><span class="n">connection</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">][</span><span class="s1">&#39;username&#39;</span><span class="p">])</span>
@@ -102,16 +102,16 @@ and doing API queries against it.</p>
 </pre></div>
 </div>
 <dl class="method">
-<dt id="aspy.ArchivesSpace.allIdsRequestGet">
-<code class="descname">allIdsRequestGet</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.allIdsRequestGet" title="Permalink to this definition">¶</a></dt>
+<dt id="archivesspace.ArchivesSpace.allIdsRequestGet">
+<code class="descname">allIdsRequestGet</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace.allIdsRequestGet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of all of the IDs</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="aspy.ArchivesSpace.connect">
-<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.connect" title="Permalink to this definition">¶</a></dt>
+<dt id="archivesspace.ArchivesSpace.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start a sessions with ArchivesSpace. This must be done before anything else.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aspy</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">archivesspace</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">aspace</span><span class="o">.</span><span class="n">connection</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">][</span><span class="s1">&#39;username&#39;</span><span class="p">])</span>
@@ -121,16 +121,16 @@ and doing API queries against it.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="aspy.ArchivesSpace.pagedRequestGet">
-<code class="descname">pagedRequestGet</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.pagedRequestGet" title="Permalink to this definition">¶</a></dt>
+<dt id="archivesspace.ArchivesSpace.pagedRequestGet">
+<code class="descname">pagedRequestGet</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace.pagedRequestGet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Automatically request all the pages to build a complete data set</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="aspy.ArchivesSpace.requestGet">
-<code class="descname">requestGet</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.requestGet" title="Permalink to this definition">¶</a></dt>
+<dt id="archivesspace.ArchivesSpace.requestGet">
+<code class="descname">requestGet</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace.requestGet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Do a GET request to ArchivesSpace and return the JSON response</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aspy</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">archivesspace</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">jsonResponse</span> <span class="o">=</span> <span class="n">aspace</span><span class="o">.</span><span class="n">requestGet</span><span class="p">(</span><span class="s2">&quot;/users/1&quot;</span><span class="p">)</span>
@@ -141,8 +141,8 @@ and doing API queries against it.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="aspy.ArchivesSpace.requestPost">
-<code class="descname">requestPost</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#aspy.ArchivesSpace.requestPost" title="Permalink to this definition">¶</a></dt>
+<dt id="archivesspace.ArchivesSpace.requestPost">
+<code class="descname">requestPost</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace.requestPost" title="Permalink to this definition">¶</a></dt>
 <dd><p>Do a POST request to ArchivesSpace and return the JSON response</p>
 </dd></dl>
 
@@ -157,7 +157,7 @@ and doing API queries against it.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="#">aspy</a></h1>
+<h1 class="logo"><a href="#">archivesspace</a></h1>
 
 
 
