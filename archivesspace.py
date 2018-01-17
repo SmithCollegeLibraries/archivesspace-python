@@ -124,7 +124,7 @@ class AspaceBadRequest(Exception):
         self.requestdata = requestdata
         self.response = response
     def __str__(self):
-        return "ASpace Bad Request 400 %s \nRequest data '%s'" % (formatResponse(self.response), self.requestdata)
+        return "ASpace Bad Request 400 %s \nRequest data '%s'" % (formatResponse(self.response), formatJson(self.requestdata))
 class AspaceForbidden(Exception):
     pass
 class AspaceNotFound(Exception):
@@ -133,15 +133,20 @@ class AspaceError(Exception):
     pass
 
 def formatJson(data):
+    "Use this function to make data look nice"
     return json.dumps(data, indent=4)
 
 def formatResponse(response):
+    "Get the data element of a requests response and format it to be pretty"
     return formatJson(response.json())
     
 def logResponse(response):
     logging.error('Response: ' + formatResponse(response))
 
 def checkStatusCodes(response, data={}):
+    """This helper function checks the response from a request for problems and then
+    returns the data if everything is fine.
+    """
     if response.status_code == 403:
         logging.error("Forbidden -- check your credentials.")
         logResponse(response)
@@ -222,12 +227,12 @@ class ArchivesSpace(object):
         try:
             if type == "post":
                 if self.jsonSerializerDefault is not None:
-                    data = json.dumps(data, default = self.jsonSerializerDefault) # turn the data into json format for POST requests
+                    datajson = json.dumps(data, default = self.jsonSerializerDefault) # turn the data into json format for POST requests
                 else:
-                    data = json.dumps(data) # turn the data into json format for POST requests
-                r = self.session.post(self._getHost() + path, data = data)
+                    datajson = json.dumps(data) # turn the data into json format for POST requests
+                r = self.session.post(self._getHost() + path, data = datajson)
             elif type == "get":
-                r = self.session.get(self._getHost() + path, data = data)
+                r = self.session.get(self._getHost() + path, data = datajson)
             else:
                 raise BadRequestType
             
