@@ -258,8 +258,8 @@ class ArchivesSpace(object):
         data = ""
         try:
             data = requestData
-        except:
-            pass
+        except e:
+            raise e
         return self._request(path, 'post', data)
 
     def requestGet(self, path, requestData={}):
