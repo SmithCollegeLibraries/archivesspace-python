@@ -120,7 +120,11 @@ class BadRequestType(Exception):
 class NotPaginated(Exception):
     pass
 class AspaceBadRequest(Exception):
-    pass
+    def __init__(self, requestdata, response):
+        self.requestdata = requestdata
+        self.response = response
+    def __str__(self):
+        return "ASpace Bad Request 400 %s \nRequest data '%s'" % (formatResponse(self.response), self.requestdata)
 class AspaceForbidden(Exception):
     pass
 class AspaceNotFound(Exception):
@@ -128,18 +132,23 @@ class AspaceNotFound(Exception):
 class AspaceError(Exception):
     pass
 
-def logResponse(response):
-    logging.error('Response: ' + json.dumps(response.json(), indent=4))
+def formatJson(data):
+    return json.dumps(data, indent=4)
 
-def checkStatusCodes(response):
+def formatResponse(response):
+    return formatJson(response.json())
+    
+def logResponse(response):
+    logging.error('Response: ' + formatResponse(response))
+
+def checkStatusCodes(response, data={}):
     if response.status_code == 403:
         logging.error("Forbidden -- check your credentials.")
         logResponse(response)
         raise AspaceForbidden
     elif response.status_code == 400:
-        logging.error("Bad Request -- can't do that.")
-        logResponse(response)
-        raise AspaceBadRequest
+#        logResponse(response)
+        raise AspaceBadRequest(data, response)
     elif response.status_code == 404:
         logging.error("Not Found.")
         logResponse(response)
@@ -226,7 +235,7 @@ class ArchivesSpace(object):
             logging.error('Unable to connect to ArchivesSpace. Check the host information.')
             raise ConnectionError
         else:
-            jsonResponse = checkStatusCodes(r)
+            jsonResponse = checkStatusCodes(r, data=data)
             return jsonResponse
 
     def requestPost(self, path, requestData={}):
