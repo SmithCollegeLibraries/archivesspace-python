@@ -224,6 +224,7 @@ class ArchivesSpace(object):
 
     def _request(self, path, type, data):
         # Send the request
+        datajson = ''
         try:
             if type == "post":
                 if self.jsonSerializerDefault is not None:
