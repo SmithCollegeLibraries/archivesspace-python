@@ -1,8 +1,8 @@
-"""**aspy** is a python module for making queries to ArchivesSpace much easier.
+"""**archivesspace** is a python module for making queries to ArchivesSpace much easier.
 
 Compatibility
 -------------
-As of writing, aspy has only been tested with ArchivesSpace 2.1.2 and Python 3.
+As of writing, archivesspace has only been tested with ArchivesSpace 2.1.2 and Python 3.
 YMMV with other versions.
 
 Getting started
@@ -11,7 +11,7 @@ At the heart of the module is the class `ArchivesSpace`. To set up a connection
 create an `ArchivesSpace` with your login credentials, and run the `connect()`
 method.
 
->>> from aspy import ArchivesSpace
+>>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> print(aspace.connection['user']['username'])
@@ -33,7 +33,7 @@ Getting a record
 -----------------
 To retrieve a record from ArchivesSpace use the requestGet() method.
 
->>> from aspy import ArchivesSpace
+>>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> jsonResponse = aspace.requestGet("/users/1")
@@ -47,7 +47,7 @@ To post a record to ArchivesSpace use the `requestPost()` method.
 
 Example:
 
->>> from aspy import ArchivesSpace
+>>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> 
@@ -76,9 +76,9 @@ record, then post the modified version back to ArchivesSpace.
 
 >>> aspace = ArchivesSpace('http','localhost', 8089, 'admin', 'admin')
 >>> aspace.connect()
->>> myrecord = aspace.requestGet('/subjects/12')
+>>> myrecord = aspace.requestGet('/subjects/1')
 >>> myrecord['scope_note'] = "Hello World"
->>> response = aspace.requestPost('/subjects/12', requestData=myrecord)
+>>> response = aspace.requestPost('/subjects/1', requestData=myrecord)
 >>> response['lock_version']
 1
 
@@ -92,7 +92,7 @@ Getting listings and search results
 ArchivesSpace uses *paginated* responses for queries that would return many items.
 To do a paginated query use the `pagedRequestGet()` method.
 
->>> from aspy import ArchivesSpace
+>>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> response = aspace.pagedRequestGet("/subjects")
@@ -120,7 +120,11 @@ class BadRequestType(Exception):
 class NotPaginated(Exception):
     pass
 class AspaceBadRequest(Exception):
-    pass
+    def __init__(self, requestdata, response):
+        self.requestdata = requestdata
+        self.response = response
+    def __str__(self):
+        return "ASpace Bad Request 400 %s \nRequest data '%s'" % (formatResponse(self.response), formatJson(self.requestdata))
 class AspaceForbidden(Exception):
     pass
 class AspaceNotFound(Exception):
@@ -128,18 +132,28 @@ class AspaceNotFound(Exception):
 class AspaceError(Exception):
     pass
 
-def logResponse(response):
-    logging.error('Response: ' + json.dumps(response.json(), indent=4))
+def formatJson(data):
+    "Use this function to make data look nice"
+    return json.dumps(data, indent=4)
 
-def checkStatusCodes(response):
+def formatResponse(response):
+    "Get the data element of a requests response and format it to be pretty"
+    return formatJson(response.json())
+    
+def logResponse(response):
+    logging.error('Response: ' + formatResponse(response))
+
+def checkStatusCodes(response, data={}):
+    """This helper function checks the response from a request for problems and then
+    returns the data if everything is fine.
+    """
     if response.status_code == 403:
         logging.error("Forbidden -- check your credentials.")
         logResponse(response)
         raise AspaceForbidden
     elif response.status_code == 400:
-        logging.error("Bad Request -- can't do that.")
-        logResponse(response)
-        raise AspaceBadRequest
+#        logResponse(response)
+        raise AspaceBadRequest(data, response)
     elif response.status_code == 404:
         logging.error("Not Found.")
         logResponse(response)
@@ -184,7 +198,7 @@ class ArchivesSpace(object):
     """Base class for establishing a session with an ArchivesSpace repository,
     and doing API queries against it.
     
-    >>> from aspy import ArchivesSpace
+    >>> from archivesspace import ArchivesSpace
     >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
     >>> aspace.connect()
     >>> print(aspace.connection['user']['username'])
@@ -210,15 +224,16 @@ class ArchivesSpace(object):
 
     def _request(self, path, type, data):
         # Send the request
+        datajson = ''
         try:
             if type == "post":
                 if self.jsonSerializerDefault is not None:
-                    data = json.dumps(data, default = self.jsonSerializerDefault) # turn the data into json format for POST requests
+                    datajson = json.dumps(data, default = self.jsonSerializerDefault) # turn the data into json format for POST requests
                 else:
-                    data = json.dumps(data) # turn the data into json format for POST requests
-                r = self.session.post(self._getHost() + path, data = data)
+                    datajson = json.dumps(data) # turn the data into json format for POST requests
+                r = self.session.post(self._getHost() + path, data = datajson)
             elif type == "get":
-                r = self.session.get(self._getHost() + path, data = data)
+                r = self.session.get(self._getHost() + path, data = datajson)
             else:
                 raise BadRequestType
             
@@ -226,13 +241,13 @@ class ArchivesSpace(object):
             logging.error('Unable to connect to ArchivesSpace. Check the host information.')
             raise ConnectionError
         else:
-            jsonResponse = checkStatusCodes(r)
+            jsonResponse = checkStatusCodes(r, data=data)
             return jsonResponse
 
     def requestPost(self, path, requestData={}):
         """Do a POST request to ArchivesSpace and return the JSON response
 
-        >>> from aspy import ArchivesSpace
+        >>> from archivesspace import ArchivesSpace
         >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
         >>> aspace.connect()
         >>> 
@@ -258,14 +273,14 @@ class ArchivesSpace(object):
         data = ""
         try:
             data = requestData
-        except:
-            pass
+        except e:
+            raise e
         return self._request(path, 'post', data)
 
     def requestGet(self, path, requestData={}):
         """Do a GET request to ArchivesSpace and return the JSON response
         
-        >>> from aspy import ArchivesSpace
+        >>> from archivesspace import ArchivesSpace
         >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
         >>> aspace.connect()
         >>> jsonResponse = aspace.requestGet("/users/1")
@@ -282,7 +297,7 @@ class ArchivesSpace(object):
     def connect(self):
         """Start a sessions with ArchivesSpace. This must be done before anything else.
 
-        >>> from aspy import ArchivesSpace
+        >>> from archivesspace import ArchivesSpace
         >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
         >>> aspace.connect()
         >>> print(aspace.connection['user']['username'])

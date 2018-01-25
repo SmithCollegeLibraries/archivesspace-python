@@ -1,14 +1,14 @@
-**aspy** a Python library for querying the ArchivesSpace API
+**archivesspace** a Python library for querying the ArchivesSpace API
 ************************************************************
 
-**aspy** is a python module for making queries to ArchivesSpace much
+**archivesspace** is a python module for making queries to ArchivesSpace much
 easier.
 
 
 Compatibility
 =============
 
-As of writing, aspy has only been tested with ArchivesSpace 2.1.2 and
+As of writing, archivesspace has only been tested with ArchivesSpace 2.1.2 and
 Python 3. YMMV with other versions.
 
 
@@ -19,7 +19,7 @@ At the heart of the module is the class *ArchivesSpace*. To set up a
 connection create an *ArchivesSpace* with your login credentials, and
 run the *connect()* method.
 
->>> from aspy import ArchivesSpace
+>>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> print(aspace.connection['user']['username'])
@@ -44,7 +44,7 @@ Getting a record
 
 To retrieve a record from ArchivesSpace use the requestGet() method.
 
->>> from aspy import ArchivesSpace
+>>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> jsonResponse = aspace.requestGet("/users/1")
@@ -59,7 +59,7 @@ To post a record to ArchivesSpace use the *requestPost()* method.
 
 Example:
 
->>> from aspy import ArchivesSpace
+>>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> 
@@ -110,7 +110,7 @@ ArchivesSpace uses *paginated* responses for queries that would return
 many items. To do a paginated query use the *pagedRequestGet()*
 method.
 
->>> from aspy import ArchivesSpace
+>>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> response = aspace.pagedRequestGet("/subjects")
@@ -126,12 +126,12 @@ North Slope
 Reference
 =========
 
-class aspy.ArchivesSpace(protocol, domain, port, username, password)
+class archivesspace.ArchivesSpace(protocol, domain, port, username, password)
 
    Base class for establishing a session with an ArchivesSpace
    repository, and doing API queries against it.
 
-   >>> from aspy import ArchivesSpace
+   >>> from archivesspace import ArchivesSpace
    >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
    >>> aspace.connect()
    >>> print(aspace.connection['user']['username'])
@@ -146,7 +146,7 @@ class aspy.ArchivesSpace(protocol, domain, port, username, password)
       Start a sessions with ArchivesSpace. This must be done before
       anything else.
 
-      >>> from aspy import ArchivesSpace
+      >>> from archivesspace import ArchivesSpace
       >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
       >>> aspace.connect()
       >>> print(aspace.connection['user']['username'])
@@ -160,7 +160,7 @@ class aspy.ArchivesSpace(protocol, domain, port, username, password)
 
       Do a GET request to ArchivesSpace and return the JSON response
 
-      >>> from aspy import ArchivesSpace
+      >>> from archivesspace import ArchivesSpace
       >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
       >>> aspace.connect()
       >>> jsonResponse = aspace.requestGet("/users/1")
@@ -171,7 +171,7 @@ class aspy.ArchivesSpace(protocol, domain, port, username, password)
 
       Do a POST request to ArchivesSpace and return the JSON response
 
-      >>> from aspy import ArchivesSpace
+      >>> from archivesspace import ArchivesSpace
       >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
       >>> aspace.connect()
       >>> 
