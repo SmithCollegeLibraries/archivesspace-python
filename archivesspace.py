@@ -233,7 +233,7 @@ class ArchivesSpace(object):
                     datajson = json.dumps(data) # turn the data into json format for POST requests
                 r = self.session.post(self._getHost() + path, data = datajson)
             elif type == "get":
-                r = self.session.get(self._getHost() + path, data = datajson)
+                r = self.session.get(self._getHost() + path, data = data)
             else:
                 raise BadRequestType
             
