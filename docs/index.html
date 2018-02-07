@@ -64,28 +64,87 @@ method.</p>
 REST API documentation located here:
 <a class="reference external" href="https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-api">https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-api</a></p>
 <blockquote>
-<div><p>Pro tip: If required fields are missing from the API documentation, get them
+<div><p>Pro tip: If fields are missing from the API documentation, get them
 from the horse’s mouth by checking the ArchivesSpace JSON Schemas located
 here:
 <a class="reference external" href="https://github.com/archivesspace/archivesspace/blob/master/common/schemas">https://github.com/archivesspace/archivesspace/blob/master/common/schemas</a></p>
 <p>Note that required fields are indicated by “ifmissing” <em>not</em> “required.”</p>
 </div></blockquote>
 </div>
-<div class="section" id="getting-an-object">
-<h2>Getting an object<a class="headerlink" href="#getting-an-object" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<div class="section" id="getting-a-record">
+<h2>Getting a record<a class="headerlink" href="#getting-a-record" title="Permalink to this headline">¶</a></h2>
+<p>To retrieve a record from ArchivesSpace use the get() method.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">archivesspace</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jsonResponse</span> <span class="o">=</span> <span class="n">aspace</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/users/1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jsonResponse</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
+<span class="go">&#39;admin&#39;</span>
+</pre></div>
 </div>
-<div class="section" id="getting-listings-and-searches">
-<h2>Getting listings and searches<a class="headerlink" href="#getting-listings-and-searches" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
 </div>
-<div class="section" id="posting-an-object">
-<h2>Posting an object<a class="headerlink" href="#posting-an-object" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<div class="section" id="posting-a-record">
+<h2>Posting a record<a class="headerlink" href="#posting-a-record" title="Permalink to this headline">¶</a></h2>
+<p>To post a record to ArchivesSpace use the <cite>post()</cite> method.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">archivesspace</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;jsonmodel_type&quot;</span><span class="p">:</span><span class="s2">&quot;subject&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;external_ids&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;publish&quot;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;used_within_repositories&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;used_within_published_repositories&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;terms&quot;</span><span class="p">:[{</span> <span class="s2">&quot;jsonmodel_type&quot;</span><span class="p">:</span><span class="s2">&quot;term&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;term&quot;</span><span class="p">:</span><span class="s2">&quot;Alberta&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;term_type&quot;</span><span class="p">:</span><span class="s2">&quot;geographic&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;vocabulary&quot;</span><span class="p">:</span><span class="s2">&quot;/vocabularies/1&quot;</span><span class="p">}],</span>
+<span class="gp">... </span>        <span class="s2">&quot;external_documents&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;vocabulary&quot;</span><span class="p">:</span><span class="s2">&quot;/vocabularies/1&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;authority_id&quot;</span><span class="p">:</span><span class="s2">&quot;myid114&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;source&quot;</span><span class="p">:</span><span class="s2">&quot;local&quot;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">aspace</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/subjects&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># import pdb; pdb.set_trace()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;uri&#39;</span><span class="p">]</span>
+<span class="go">&#39;/subjects/...&#39;</span>
+</pre></div>
 </div>
-<div class="section" id="modifying-an-object">
-<h2>Modifying an object<a class="headerlink" href="#modifying-an-object" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+</div>
+<div class="section" id="updating-a-record">
+<h2>Updating a record<a class="headerlink" href="#updating-a-record" title="Permalink to this headline">¶</a></h2>
+<p>Upading a record in ArchivesSpace is a two step process. First, retrieve the
+record, then post the modified version back to ArchivesSpace.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">8089</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">myrecord</span> <span class="o">=</span> <span class="n">aspace</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/subjects/1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">myrecord</span><span class="p">[</span><span class="s1">&#39;scope_note&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Hello World&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">aspace</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/subjects/1&#39;</span><span class="p">,</span> <span class="n">requestData</span><span class="o">=</span><span class="n">myrecord</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;lock_version&#39;</span><span class="p">]</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<blockquote>
+<div>Behind the scenes: there’s a special field called <cite>lock_version</cite> included in the
+retrieved data structure. This field is required by ArchivesSpace when
+you post the record back. This field ensures that only one agent edits the
+record at a time.</div></blockquote>
+</div>
+<div class="section" id="getting-listings-and-search-results">
+<h2>Getting listings and search results<a class="headerlink" href="#getting-listings-and-search-results" title="Permalink to this headline">¶</a></h2>
+<p>ArchivesSpace uses <em>paginated</em> responses for queries that would return many items.
+To do a paginated query use the <cite>getPaged()</cite> method.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">archivesspace</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">aspace</span><span class="o">.</span><span class="n">getPaged</span><span class="p">(</span><span class="s2">&quot;/subjects&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">subject</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span>
+<span class="gp">... </span>
+<span class="go">Alberta</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
@@ -102,12 +161,6 @@ and doing API queries against it.</p>
 </pre></div>
 </div>
 <dl class="method">
-<dt id="archivesspace.ArchivesSpace.allIdsRequestGet">
-<code class="descname">allIdsRequestGet</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace.allIdsRequestGet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all of the IDs</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="archivesspace.ArchivesSpace.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start a sessions with ArchivesSpace. This must be done before anything else.</p>
@@ -121,19 +174,13 @@ and doing API queries against it.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="archivesspace.ArchivesSpace.pagedRequestGet">
-<code class="descname">pagedRequestGet</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace.pagedRequestGet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Automatically request all the pages to build a complete data set</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="archivesspace.ArchivesSpace.requestGet">
-<code class="descname">requestGet</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace.requestGet" title="Permalink to this definition">¶</a></dt>
+<dt id="archivesspace.ArchivesSpace.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>path</em>, <em>requestData={}</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Do a GET request to ArchivesSpace and return the JSON response</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">archivesspace</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">jsonResponse</span> <span class="o">=</span> <span class="n">aspace</span><span class="o">.</span><span class="n">requestGet</span><span class="p">(</span><span class="s2">&quot;/users/1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jsonResponse</span> <span class="o">=</span> <span class="n">aspace</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/users/1&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">jsonResponse</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
 <span class="go">&#39;admin&#39;</span>
 </pre></div>
@@ -141,11 +188,75 @@ and doing API queries against it.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="archivesspace.ArchivesSpace.requestPost">
-<code class="descname">requestPost</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace.requestPost" title="Permalink to this definition">¶</a></dt>
-<dd><p>Do a POST request to ArchivesSpace and return the JSON response</p>
+<dt id="archivesspace.ArchivesSpace.getPaged">
+<code class="descname">getPaged</code><span class="sig-paren">(</span><em>path</em>, <em>requestData={}</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace.getPaged" title="Permalink to this definition">¶</a></dt>
+<dd><p>Automatically request all the pages to build a complete data set</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="archivesspace.ArchivesSpace.getPagedAllIds">
+<code class="descname">getPagedAllIds</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace.getPagedAllIds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all of the IDs</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="archivesspace.ArchivesSpace.post">
+<code class="descname">post</code><span class="sig-paren">(</span><em>path</em>, <em>requestData={}</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do a POST request to ArchivesSpace and return the JSON response</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">archivesspace</span> <span class="k">import</span> <span class="n">ArchivesSpace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span> <span class="o">=</span> <span class="n">ArchivesSpace</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="s1">&#39;8089&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aspace</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;jsonmodel_type&quot;</span><span class="p">:</span><span class="s2">&quot;subject&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;external_ids&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;publish&quot;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;used_within_repositories&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;used_within_published_repositories&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;terms&quot;</span><span class="p">:[{</span> <span class="s2">&quot;jsonmodel_type&quot;</span><span class="p">:</span><span class="s2">&quot;term&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;term&quot;</span><span class="p">:</span><span class="s2">&quot;North Pole&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;term_type&quot;</span><span class="p">:</span><span class="s2">&quot;geographic&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;vocabulary&quot;</span><span class="p">:</span><span class="s2">&quot;/vocabularies/1&quot;</span><span class="p">}],</span>
+<span class="gp">... </span>        <span class="s2">&quot;external_documents&quot;</span><span class="p">:[],</span>
+<span class="gp">... </span>        <span class="s2">&quot;vocabulary&quot;</span><span class="p">:</span><span class="s2">&quot;/vocabularies/1&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;authority_id&quot;</span><span class="p">:</span><span class="s2">&quot;myid314&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;source&quot;</span><span class="p">:</span><span class="s2">&quot;local&quot;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">aspace</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/subjects&quot;</span><span class="p">,</span> <span class="n">requestData</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;uri&#39;</span><span class="p">]</span>
+<span class="go">&#39;/subjects/...&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="archivesspace.ArchivesSpace.setJsonSerializerDefault">
+<code class="descname">setJsonSerializerDefault</code><span class="sig-paren">(</span><em>jsonSerializerDefault</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.ArchivesSpace.setJsonSerializerDefault" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set an optional custom JSON serializer to be passed to json.dumps.
+c.f.
+<a class="reference external" href="https://docs.python.org/3/library/json.html#json.JSONEncoder.default">https://docs.python.org/3/library/json.html#json.JSONEncoder.default</a></p>
+<p>If you don’t know what this is, don’t use it.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="archivesspace.checkStatusCodes">
+<code class="descclassname">archivesspace.</code><code class="descname">checkStatusCodes</code><span class="sig-paren">(</span><em>response</em>, <em>data={}</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.checkStatusCodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>This helper function checks the response from a request for problems and then
+returns the data if everything is fine.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="archivesspace.formatJson">
+<code class="descclassname">archivesspace.</code><code class="descname">formatJson</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.formatJson" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this function to make data look nice</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="archivesspace.formatResponse">
+<code class="descclassname">archivesspace.</code><code class="descname">formatResponse</code><span class="sig-paren">(</span><em>response</em><span class="sig-paren">)</span><a class="headerlink" href="#archivesspace.formatResponse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the data element of a requests response and format it to be pretty</p>
 </dd></dl>
 
 </div>
