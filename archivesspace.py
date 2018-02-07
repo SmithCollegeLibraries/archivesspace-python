@@ -339,8 +339,8 @@ class ArchivesSpace(object):
         numPages = response['last_page']
         # Loop through all the pages and append them to a single big data structure
         for page in range(1, numPages):
-            data = _unionRequestData({"page": str(page)}, requestData)
-            response = self.get(path, requestData=requestData)
+            requestDataPaginated = _unionRequestData(requestData, {"page": str(page)})
+            response = self.requestGet(path, requestData=requestDataPaginated)
             fullSet.extend(response['results'])
         # Return the big data structure
         return fullSet
