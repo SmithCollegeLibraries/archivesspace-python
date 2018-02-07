@@ -5,8 +5,10 @@
 ArchivesSpace much easier.
 
 This code lives at: https://github.com/SmithCollegeLibraries
-/archivesspace-python Documentation located here:
-https://smithcollegelibraries.github.io/archivesspace-python/
+/archivesspace-python
+
+Documentation located here: https://smithcollegelibraries.github.io
+/archivesspace-python/
 
 
 Compatibility

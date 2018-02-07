@@ -1,7 +1,6 @@
 """**archivesspace** is a python module for making queries to ArchivesSpace much easier.
 
 This code lives at: https://github.com/SmithCollegeLibraries/archivesspace-python
-Documentation located here: https://smithcollegelibraries.github.io/archivesspace-python/
 
 Documentation located here: https://smithcollegelibraries.github.io/archivesspace-python/
 
