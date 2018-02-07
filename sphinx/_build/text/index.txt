@@ -1,15 +1,15 @@
 **archivesspace** a Python library for querying the ArchivesSpace API
-************************************************************
+*********************************************************************
 
-**archivesspace** is a python module for making queries to ArchivesSpace much
-easier.
+**archivesspace** is a python module for making queries to
+ArchivesSpace much easier.
 
 
 Compatibility
 =============
 
-As of writing, archivesspace has only been tested with ArchivesSpace 2.1.2 and
-Python 3. YMMV with other versions.
+As of writing, archivesspace has only been tested with ArchivesSpace
+2.1.2 and Python 3. YMMV with other versions.
 
 
 Getting started
@@ -42,12 +42,12 @@ api
 Getting a record
 ================
 
-To retrieve a record from ArchivesSpace use the requestGet() method.
+To retrieve a record from ArchivesSpace use the get() method.
 
 >>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
->>> jsonResponse = aspace.requestGet("/users/1")
+>>> jsonResponse = aspace.get("/users/1")
 >>> jsonResponse['username']
 'admin'
 
@@ -55,7 +55,7 @@ To retrieve a record from ArchivesSpace use the requestGet() method.
 Posting a record
 ================
 
-To post a record to ArchivesSpace use the *requestPost()* method.
+To post a record to ArchivesSpace use the *post()* method.
 
 Example:
 
@@ -77,9 +77,10 @@ Example:
 ...         "authority_id":"myid114",
 ...         "source":"local"}
 >>> 
->>> response = aspace.requestPost("/subjects", data)
->>> print(response)
-{'uri': '/subjects/...', 'stale': True, 'lock_version': ..., 'id': ..., 'warnings': [], 'status': 'Created'}
+>>> response = aspace.post("/subjects", data)
+>>> # import pdb; pdb.set_trace()
+>>> response['uri']
+'/subjects/...'
 
 
 Updating a record
@@ -91,9 +92,9 @@ ArchivesSpace.
 
 >>> aspace = ArchivesSpace('http','localhost', 8089, 'admin', 'admin')
 >>> aspace.connect()
->>> myrecord = aspace.requestGet('/subjects/12')
+>>> myrecord = aspace.get('/subjects/1')
 >>> myrecord['scope_note'] = "Hello World"
->>> response = aspace.requestPost('/subjects/12', requestData=myrecord)
+>>> response = aspace.post('/subjects/1', requestData=myrecord)
 >>> response['lock_version']
 1
 
@@ -107,20 +108,16 @@ Getting listings and search results
 ===================================
 
 ArchivesSpace uses *paginated* responses for queries that would return
-many items. To do a paginated query use the *pagedRequestGet()*
-method.
+many items. To do a paginated query use the *getPaged()* method.
 
 >>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
->>> response = aspace.pagedRequestGet("/subjects")
+>>> response = aspace.getPaged("/subjects")
 >>> for subject in response:
 ...     print(subject['title'])
 ... 
-Term 132
-Antarctica
-North Pole
-North Slope
+Alberta
 
 
 Reference
@@ -137,10 +134,6 @@ class archivesspace.ArchivesSpace(protocol, domain, port, username, password)
    >>> print(aspace.connection['user']['username'])
    admin
 
-   allIdsRequestGet(path)
-
-      Get a list of all of the IDs
-
    connect()
 
       Start a sessions with ArchivesSpace. This must be done before
@@ -152,22 +145,26 @@ class archivesspace.ArchivesSpace(protocol, domain, port, username, password)
       >>> print(aspace.connection['user']['username'])
       admin
 
-   pagedRequestGet(path, requestData={})
-
-      Automatically request all the pages to build a complete data set
-
-   requestGet(path, requestData={})
+   get(path, requestData={})
 
       Do a GET request to ArchivesSpace and return the JSON response
 
       >>> from archivesspace import ArchivesSpace
       >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
       >>> aspace.connect()
-      >>> jsonResponse = aspace.requestGet("/users/1")
+      >>> jsonResponse = aspace.get("/users/1")
       >>> jsonResponse['username']
       'admin'
 
-   requestPost(path, requestData={})
+   getPaged(path, requestData={})
+
+      Automatically request all the pages to build a complete data set
+
+   getPagedAllIds(path)
+
+      Get a list of all of the IDs
+
+   post(path, requestData={})
 
       Do a POST request to ArchivesSpace and return the JSON response
 
@@ -189,7 +186,29 @@ class archivesspace.ArchivesSpace(protocol, domain, port, username, password)
       ...         "authority_id":"myid314",
       ...         "source":"local"}
       >>> 
-      >>> response = aspace.requestPost("/subjects", requestData=data)
-      >>> print(response)
-      {'uri': '/subjects/...', 'stale': True, 'lock_version': ..., 'id': ..., 'warnings': [], 'status': 'Created'}
+      >>> response = aspace.post("/subjects", requestData=data)
+      >>> response['uri']
+      '/subjects/...'
       >>> 
+
+   setJsonSerializerDefault(jsonSerializerDefault)
+
+      Set an optional custom JSON serializer to be passed to
+      json.dumps. c.f. https://docs.python.org/3/library/json.html#js
+      on.JSONEncoder.default
+
+      If you don’t know what this is, don’t use it.
+
+archivesspace.checkStatusCodes(response, data={})
+
+   This helper function checks the response from a request for
+   problems and then returns the data if everything is fine.
+
+archivesspace.formatJson(data)
+
+   Use this function to make data look nice
+
+archivesspace.formatResponse(response)
+
+   Get the data element of a requests response and format it to be
+   pretty
