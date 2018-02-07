@@ -2,6 +2,8 @@
 
 This code lives at: https://github.com/SmithCollegeLibraries/archivesspace-python
 
+Documentation located here: https://smithcollegelibraries.github.io/archivesspace-python/
+
 Compatibility
 -------------
 As of writing, **archivesspace** has only been tested with ArchivesSpace 2.1.2 and Python 3.
