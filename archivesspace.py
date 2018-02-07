@@ -31,19 +31,19 @@ https://archivesspace.github.io/archivesspace/api/#archivesspace-rest-api
 
 Getting a record
 -----------------
-To retrieve a record from ArchivesSpace use the requestGet() method.
+To retrieve a record from ArchivesSpace use the get() method.
 
 >>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
->>> jsonResponse = aspace.requestGet("/users/1")
+>>> jsonResponse = aspace.get("/users/1")
 >>> jsonResponse['username']
 'admin'
 
 
 Posting a record
 -----------------
-To post a record to ArchivesSpace use the `requestPost()` method.
+To post a record to ArchivesSpace use the `post()` method.
 
 Example:
 
@@ -65,9 +65,10 @@ Example:
 ...         "authority_id":"myid114",
 ...         "source":"local"}
 >>> 
->>> response = aspace.requestPost("/subjects", data)
->>> print(response)
-{'uri': '/subjects/...', 'stale': True, 'lock_version': ..., 'id': ..., 'warnings': [], 'status': 'Created'}
+>>> response = aspace.post("/subjects", data)
+>>> # import pdb; pdb.set_trace()
+>>> response['uri']
+'/subjects/...'
 
 Updating a record
 -------------------
@@ -76,9 +77,9 @@ record, then post the modified version back to ArchivesSpace.
 
 >>> aspace = ArchivesSpace('http','localhost', 8089, 'admin', 'admin')
 >>> aspace.connect()
->>> myrecord = aspace.requestGet('/subjects/1')
+>>> myrecord = aspace.get('/subjects/1')
 >>> myrecord['scope_note'] = "Hello World"
->>> response = aspace.requestPost('/subjects/1', requestData=myrecord)
+>>> response = aspace.post('/subjects/1', requestData=myrecord)
 >>> response['lock_version']
 1
 
@@ -90,19 +91,16 @@ record, then post the modified version back to ArchivesSpace.
 Getting listings and search results
 -----------------------------------
 ArchivesSpace uses *paginated* responses for queries that would return many items.
-To do a paginated query use the `pagedRequestGet()` method.
+To do a paginated query use the `getPaged()` method.
 
 >>> from archivesspace import ArchivesSpace
 >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
->>> response = aspace.pagedRequestGet("/subjects")
+>>> response = aspace.getPaged("/subjects")
 >>> for subject in response:
 ...     print(subject['title'])
 ... 
-Term 132
-Antarctica
-North Pole
-North Slope
+Alberta
 
 Reference
 ---------
@@ -174,8 +172,11 @@ def _unionRequestData(defaultRequestData, newRequestData):
     unified set of data values to pass to ASpace for the request. Passed data
     overrides default data.
     
-    >>> _unionRequestData({"foo": "bar"}, {"hello": "world"})
-    {'foo': 'bar', 'hello': 'world'}
+    >>> unionedData = _unionRequestData({"foo": "bar"}, {"hello": "world"})
+    >>> unionedData['foo']
+    'bar'
+    >>> unionedData['hello']
+    'world'
     >>> _unionRequestData({"foo": "bar"}, {"foo": "world"})
     {'foo': 'world'}
     >>> 
@@ -244,7 +245,7 @@ class ArchivesSpace(object):
             jsonResponse = checkStatusCodes(r, data=data)
             return jsonResponse
 
-    def requestPost(self, path, requestData={}):
+    def post(self, path, requestData={}):
         """Do a POST request to ArchivesSpace and return the JSON response
 
         >>> from archivesspace import ArchivesSpace
@@ -265,9 +266,9 @@ class ArchivesSpace(object):
         ...         "authority_id":"myid314",
         ...         "source":"local"}
         >>> 
-        >>> response = aspace.requestPost("/subjects", requestData=data)
-        >>> print(response)
-        {'uri': '/subjects/...', 'stale': True, 'lock_version': ..., 'id': ..., 'warnings': [], 'status': 'Created'}
+        >>> response = aspace.post("/subjects", requestData=data)
+        >>> response['uri']
+        '/subjects/...'
         >>> 
         """
         data = ""
@@ -277,13 +278,13 @@ class ArchivesSpace(object):
             raise e
         return self._request(path, 'post', data)
 
-    def requestGet(self, path, requestData={}):
+    def get(self, path, requestData={}):
         """Do a GET request to ArchivesSpace and return the JSON response
         
         >>> from archivesspace import ArchivesSpace
         >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
         >>> aspace.connect()
-        >>> jsonResponse = aspace.requestGet("/users/1")
+        >>> jsonResponse = aspace.get("/users/1")
         >>> jsonResponse['username']
         'admin'
         """
@@ -321,14 +322,14 @@ class ArchivesSpace(object):
             self.sessionId = self.connection['session']
             self.session.headers.update({ 'X-ArchivesSpace-Session' : self.sessionId })
 
-    def pagedRequestGet(self, path, requestData={}):
+    def getPaged(self, path, requestData={}):
         """Automatically request all the pages to build a complete data set"""
 
         requestData = _unionRequestData({"page": "1"}, requestData)
         # Start a place to add the pages to as they come in
         fullSet = []
         # Get the first page
-        response = self.requestGet(path, requestData=requestData)
+        response = self.get(path, requestData=requestData)
         # Start the big data set
         try:
             fullSet = response['results']
@@ -339,14 +340,14 @@ class ArchivesSpace(object):
         # Loop through all the pages and append them to a single big data structure
         for page in range(1, numPages):
             data = _unionRequestData({"page": str(page)}, requestData)
-            response = self.requestGet(path, requestData=requestData)
+            response = self.get(path, requestData=requestData)
             fullSet.extend(response['results'])
         # Return the big data structure
         return fullSet
 
-    def allIdsRequestGet(self, path):
+    def getPagedAllIds(self, path):
         """Get a list of all of the IDs"""
-        response = self.requestGet(path, requestData={"all_ids": True})
+        response = self.get(path, requestData={"all_ids": True})
         # Expecting a list of ints, if it's not there's problem
         if all(isinstance(item, int) for item in response):
             return response
