@@ -16,7 +16,9 @@ create an `ArchivesSpace` with your login credentials, and run the `connect()`
 method.
 
 >>> from archivesspace import ArchivesSpace
->>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+>>> aspace = ArchivesSpace()
+>>> aspace.setServer('http', 'localhost', '8089', 'admin', 'admin')
+>>> 
 >>> aspace.connect()
 >>> print(aspace.connection['user']['username'])
 admin
@@ -38,7 +40,8 @@ Getting a record
 To retrieve a record from ArchivesSpace use the get() method.
 
 >>> from archivesspace import ArchivesSpace
->>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+>>> aspace = ArchivesSpace()
+>>> aspace.setServer('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> jsonResponse = aspace.get("/users/1")
 >>> jsonResponse['username']
@@ -52,7 +55,8 @@ To post a record to ArchivesSpace use the `post()` method.
 Example:
 
 >>> from archivesspace import ArchivesSpace
->>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+>>> aspace = ArchivesSpace()
+>>> aspace.setServer('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> 
 >>> data = { "jsonmodel_type":"subject",
@@ -98,7 +102,8 @@ ArchivesSpace uses *paginated* responses for queries that would return many item
 To do a paginated query use the `getPaged()` method.
 
 >>> from archivesspace import ArchivesSpace
->>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+>>> aspace = ArchivesSpace()
+>>> aspace.setServer('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> response = aspace.getPaged("/subjects")
 >>> for subject in response:
@@ -114,6 +119,8 @@ from string import Template
 import json
 import logging
 import pprint
+import configparser
+
 # Custom Error classes
 class ConnectionError(Exception):
     pass
@@ -204,7 +211,8 @@ class ArchivesSpace(object):
     and doing API queries against it.
     
     >>> from archivesspace import ArchivesSpace
-    >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+    >>> aspace = ArchivesSpace()
+    >>> aspace.setServer('http', 'localhost', '8089', 'admin', 'admin')
     >>> aspace.connect()
     >>> print(aspace.connection['user']['username'])
     admin
@@ -214,14 +222,37 @@ class ArchivesSpace(object):
     # See method ArchivesSpace.setJsonSerializerDefault()
     jsonSerializerDefault = None
     
-    def __init__(self, protocol, domain, port, username, password):
+    def __init__(self):
+        self.configData = configparser.ConfigParser()
+        self.serverConfig = None
+        self.session = None
+
+    def setServer(self, protocol, domain, port, username, password):
         self.protocol = protocol
         self.domain = domain
         self.port = port
         self.username = username
         self.password = password
-        self.session = None
 
+    def setServerCfg(self, fileName, section="DEFAULT"):
+        try:
+            self.configData.read_file(open(fileName), source=fileName)
+        except FileNotFoundError:
+            logging.error('No configuration file found. Configuration file required. Please copy archivesspace-example.cfg to %s and edit.' % fileName)
+            exit(1)
+
+        try:
+            self.serverConfig = self.configData[section]
+        except KeyError:
+            print("'%s' section not present in configuration file %s" % (section, fileName))
+            exit(1)
+
+        try:
+            self.setServer(self.serverConfig['protocol'], self.serverConfig['hostname'], self.serverConfig['port'], self.serverConfig['username'], self.serverConfig['password'])
+        except KeyError as e:
+            print("Missing configuration option %s" % e)
+            exit(1)
+            
     def _getHost(self):
         """Returns the host string containing the protocol domain name and port."""
         hostTemplate = Template('$protocol://$domain:$port')
@@ -253,7 +284,8 @@ class ArchivesSpace(object):
         """Do a POST request to ArchivesSpace and return the JSON response
 
         >>> from archivesspace import ArchivesSpace
-        >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+        >>> aspace = ArchivesSpace()
+        >>> aspace.setServer('http', 'localhost', '8089', 'admin', 'admin')
         >>> aspace.connect()
         >>> 
         >>> data = { "jsonmodel_type":"subject",
@@ -286,7 +318,8 @@ class ArchivesSpace(object):
         """Do a GET request to ArchivesSpace and return the JSON response
         
         >>> from archivesspace import ArchivesSpace
-        >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+        >>> aspace = ArchivesSpace()
+        >>> aspace.setServer('http', 'localhost', '8089', 'admin', 'admin')
         >>> aspace.connect()
         >>> jsonResponse = aspace.get("/users/1")
         >>> jsonResponse['username']
@@ -303,7 +336,8 @@ class ArchivesSpace(object):
         """Start a sessions with ArchivesSpace. This must be done before anything else.
 
         >>> from archivesspace import ArchivesSpace
-        >>> aspace = ArchivesSpace('http', 'localhost', '8089', 'admin', 'admin')
+        >>> aspace = ArchivesSpace()
+        >>> aspace.setServer('http', 'localhost', '8089', 'admin', 'admin')
         >>> aspace.connect()
         >>> print(aspace.connection['user']['username'])
         admin
@@ -318,8 +352,11 @@ class ArchivesSpace(object):
         try:
             response = self.session.post(self._getHost() + path, { "password" : self.password })
             jsonResponse = checkStatusCodes(response)
-        except ConnectionError:
-            logging.error("Couldn't authenticate.")
+        except requests.exceptions.ConnectionError:
+            logging.error("Connection Error.")
+            exit(1)
+        except requests.exceptions.ConnectionRefusedError:
+            logging.error("Connection refused. Is this the right server? Is ArchivesSpace running on it?")
             exit(1)
         else:
             self.connection = jsonResponse # Save connection details as python data
