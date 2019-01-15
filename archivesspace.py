@@ -355,9 +355,6 @@ class ArchivesSpace(object):
         except requests.exceptions.ConnectionError:
             logging.error("Connection Error.")
             exit(1)
-        except requests.exceptions.ConnectionRefusedError:
-            logging.error("Connection refused. Is this the right server? Is ArchivesSpace running on it?")
-            exit(1)
         else:
             self.connection = jsonResponse # Save connection details as python data
             self.sessionId = self.connection['session']
