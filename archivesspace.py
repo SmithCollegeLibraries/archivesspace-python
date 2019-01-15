@@ -83,7 +83,8 @@ Updating a record
 Upading a record in ArchivesSpace is a two step process. First, retrieve the
 record, then post the modified version back to ArchivesSpace.
 
->>> aspace = ArchivesSpace('http','localhost', 8089, 'admin', 'admin')
+>>> aspace = ArchivesSpace()
+>>> aspace.setServer('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
 >>> myrecord = aspace.get('/subjects/1')
 >>> myrecord['scope_note'] = "Hello World"
@@ -120,6 +121,8 @@ import json
 import logging
 import pprint
 import configparser
+
+logging.getLogger("requests").setLevel(logging.WARNING)
 
 # Custom Error classes
 class ConnectionError(Exception):
@@ -227,10 +230,11 @@ class ArchivesSpace(object):
         self.serverConfig = None
         self.session = None
 
-    def setServer(self, protocol, domain, port, username, password):
+    def setServer(self, protocol, domain, port, username, password, path=""):
         self.protocol = protocol
         self.domain = domain
         self.port = port
+        self.path = path
         self.username = username
         self.password = password
 
@@ -248,15 +252,15 @@ class ArchivesSpace(object):
             exit(1)
 
         try:
-            self.setServer(self.serverConfig['protocol'], self.serverConfig['hostname'], self.serverConfig['port'], self.serverConfig['username'], self.serverConfig['password'])
+            self.setServer(self.serverConfig['protocol'], self.serverConfig['hostname'], self.serverConfig['port'], self.serverConfig['username'], self.serverConfig['password'], path=self.serverConfig['path'])
         except KeyError as e:
             print("Missing configuration option %s" % e)
             exit(1)
             
     def _getHost(self):
         """Returns the host string containing the protocol domain name and port."""
-        hostTemplate = Template('$protocol://$domain:$port')
-        return hostTemplate.substitute(protocol = self.protocol, domain = self.domain, port = self.port)
+        hostTemplate = Template('$protocol://$domain:$port/$path')
+        return hostTemplate.substitute(protocol = self.protocol, domain = self.domain, port = self.port, path = self.path)
 
     def _request(self, path, type, data):
         # Send the request
