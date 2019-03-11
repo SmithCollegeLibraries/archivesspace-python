@@ -106,7 +106,7 @@ You may find you wish to Delete a record.
 >>> aspace.connect()
 >>> response = aspace.delete('/subjects/1')
 >>> response['lock_version']
-
+1
 
 Getting listings and search results
 -----------------------------------
@@ -350,7 +350,16 @@ class ArchivesSpace(object):
         return self._request(path, 'get', data)
 
     def delete(self, path, requestData={}):
-        """Do a DELETE request to ArchivesSpace and return the JSON repsonse"""
+        """Do a DELETE request to ArchivesSpace and return the JSON repsonse
+
+        >>> from archivesspace import ArchivesSpace
+        >>> aspace = ArchivesSpace()
+        >>> aspace.setServer('http', 'localhost', '8089', 'admin', 'admin')
+        >>> aspace.connect()
+        >>> jsonResponse = aspace.delete("/subjects/1")
+        >>> jsonResponse['status']
+        'Deleted'
+        """        
         data = ""
         try: 
             data = requestData
