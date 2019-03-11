@@ -97,6 +97,17 @@ record, then post the modified version back to ArchivesSpace.
     you post the record back. This field ensures that only one agent edits the
     record at a time.
 
+Deleting a record
+-------------------
+You may find you wish to Delete a record. 
+
+>>> aspace = ArchivesSpace()
+>>> aspace.setServer('http', 'localhost', '8089', 'admin', 'admin')
+>>> aspace.connect()
+>>> response = aspace.delete('/subjects/1')
+>>> response['lock_version']
+
+
 Getting listings and search results
 -----------------------------------
 ArchivesSpace uses *paginated* responses for queries that would return many items.
@@ -274,6 +285,8 @@ class ArchivesSpace(object):
                 r = self.session.post(self._getHost() + path, data = datajson)
             elif type == "get":
                 r = self.session.get(self._getHost() + path, data = data)
+            elif type == "delete":
+                r = self.session.delete(self._getHost() + path, data = data)
             else:
                 raise BadRequestType
             
@@ -335,6 +348,15 @@ class ArchivesSpace(object):
         except:
             pass
         return self._request(path, 'get', data)
+
+    def delete(self, path, requestData={}):
+        """Do a DELETE request to ArchivesSpace and return the JSON repsonse"""
+        data = ""
+        try: 
+            data = requestData
+        except:
+            pass
+        return self._request(path, 'delete', data)
         
     def connect(self):
         """Start a sessions with ArchivesSpace. This must be done before anything else.
