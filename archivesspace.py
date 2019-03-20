@@ -97,6 +97,7 @@ record, then post the modified version back to ArchivesSpace.
     you post the record back. This field ensures that only one agent edits the
     record at a time.
 
+
 Deleting a record
 -------------------
 You may find you wish to Delete a record. 
@@ -104,9 +105,26 @@ You may find you wish to Delete a record.
 >>> aspace = ArchivesSpace()
 >>> aspace.setServer('http', 'localhost', '8089', 'admin', 'admin')
 >>> aspace.connect()
->>> response = aspace.delete('/subjects/1')
->>> response['lock_version']
-1
+>>> data = { "jsonmodel_type":"subject",
+...         "external_ids":[],
+...         "publish":True,
+...         "used_within_repositories":[],
+...         "used_within_published_repositories":[],
+...         "terms":[{ "jsonmodel_type":"term",
+...         "term":"Corie Marshall",
+...         "term_type":"topical",
+...         "vocabulary":"/vocabularies/1"}],
+...         "external_documents":[],
+...         "vocabulary":"/vocabularies/1",
+...         "authority_id":"myid1a",
+...         "source":"local"}
+>>> 
+>>> response = aspace.post("/subjects", requestData=data)
+>>> uri = response['uri']
+>>> jsonResponse = aspace.delete(uri)
+>>> jsonResponse['status']
+'Deleted'
+
 
 Getting listings and search results
 -----------------------------------
@@ -356,7 +374,23 @@ class ArchivesSpace(object):
         >>> aspace = ArchivesSpace()
         >>> aspace.setServer('http', 'localhost', '8089', 'admin', 'admin')
         >>> aspace.connect()
-        >>> jsonResponse = aspace.delete("/subjects/1")
+        >>> data = { "jsonmodel_type":"subject",
+        ...         "external_ids":[],
+        ...         "publish":True,
+        ...         "used_within_repositories":[],
+        ...         "used_within_published_repositories":[],
+        ...         "terms":[{ "jsonmodel_type":"term",
+        ...         "term":"Claire Marshall",
+        ...         "term_type":"topical",
+        ...         "vocabulary":"/vocabularies/1"}],
+        ...         "external_documents":[],
+        ...         "vocabulary":"/vocabularies/1",
+        ...         "authority_id":"myid73",
+        ...         "source":"local"}
+        >>> 
+        >>> response = aspace.post("/subjects", requestData=data)
+        >>> uri = response['uri']
+        >>> jsonResponse = aspace.delete(uri)
         >>> jsonResponse['status']
         'Deleted'
         """        
