@@ -97,6 +97,35 @@ record, then post the modified version back to ArchivesSpace.
     you post the record back. This field ensures that only one agent edits the
     record at a time.
 
+
+Deleting a record
+-------------------
+You may find you wish to Delete a record. 
+
+>>> aspace = ArchivesSpace()
+>>> aspace.setServer('http', 'localhost', '8089', 'admin', 'admin')
+>>> aspace.connect()
+>>> data = { "jsonmodel_type":"subject",
+...         "external_ids":[],
+...         "publish":True,
+...         "used_within_repositories":[],
+...         "used_within_published_repositories":[],
+...         "terms":[{ "jsonmodel_type":"term",
+...         "term":"Corie Marshall",
+...         "term_type":"topical",
+...         "vocabulary":"/vocabularies/1"}],
+...         "external_documents":[],
+...         "vocabulary":"/vocabularies/1",
+...         "authority_id":"myid1a",
+...         "source":"local"}
+>>> 
+>>> response = aspace.post("/subjects", requestData=data)
+>>> uri = response['uri']
+>>> jsonResponse = aspace.delete(uri)
+>>> jsonResponse['status']
+'Deleted'
+
+
 Getting listings and search results
 -----------------------------------
 ArchivesSpace uses *paginated* responses for queries that would return many items.
@@ -274,6 +303,8 @@ class ArchivesSpace(object):
                 r = self.session.post(self._getHost() + path, data = datajson)
             elif type == "get":
                 r = self.session.get(self._getHost() + path, data = data)
+            elif type == "delete":
+                r = self.session.delete(self._getHost() + path, data = data)
             else:
                 raise BadRequestType
             
@@ -335,6 +366,40 @@ class ArchivesSpace(object):
         except:
             pass
         return self._request(path, 'get', data)
+
+    def delete(self, path, requestData={}):
+        """Do a DELETE request to ArchivesSpace and return the JSON repsonse
+
+        >>> from archivesspace import ArchivesSpace
+        >>> aspace = ArchivesSpace()
+        >>> aspace.setServer('http', 'localhost', '8089', 'admin', 'admin')
+        >>> aspace.connect()
+        >>> data = { "jsonmodel_type":"subject",
+        ...         "external_ids":[],
+        ...         "publish":True,
+        ...         "used_within_repositories":[],
+        ...         "used_within_published_repositories":[],
+        ...         "terms":[{ "jsonmodel_type":"term",
+        ...         "term":"Claire Marshall",
+        ...         "term_type":"topical",
+        ...         "vocabulary":"/vocabularies/1"}],
+        ...         "external_documents":[],
+        ...         "vocabulary":"/vocabularies/1",
+        ...         "authority_id":"myid73",
+        ...         "source":"local"}
+        >>> 
+        >>> response = aspace.post("/subjects", requestData=data)
+        >>> uri = response['uri']
+        >>> jsonResponse = aspace.delete(uri)
+        >>> jsonResponse['status']
+        'Deleted'
+        """        
+        data = ""
+        try: 
+            data = requestData
+        except:
+            pass
+        return self._request(path, 'delete', data)
         
     def connect(self):
         """Start a sessions with ArchivesSpace. This must be done before anything else.
