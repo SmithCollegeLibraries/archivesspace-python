@@ -443,7 +443,7 @@ class ArchivesSpace(object):
         except KeyError:
             raise NotPaginated
         # Then determine how many pages there are
-        numPages = response['last_page']
+        numPages = int(response['last_page']) + 1
         # Loop through all the pages and append them to a single big data structure
         for page in range(1, numPages):
             requestDataPaginated = _unionRequestData(requestData, {"page": str(page)})
